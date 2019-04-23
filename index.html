@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./index.js"></script>
+    <!--<script src="./index.js"></script>-->
 </head>
 <body>
-
+<img src="//www.baidu.com/img/bd_logo1.png?qua=high" alt="">
 </body>
 <script>
-
 
     const _config = {
         id: 0, // 上报 id
         uin: 0, // user id
-        url: '//now.qq.com/badjs', // 上报接口
+        url: '//10.65.93.95:6543/aegis/speed', // 上报接口
         version: 0,
         ext: null, // 扩展参数 用于自定义上报
         level: 4, // 错误级别 1-debug 2-info 4-error
@@ -38,12 +37,12 @@
 
     function beaconPollyfill(url, data, type) {
         if (url.indexOf('http://') !== 0 || url.indexOf('https://') !== 0) {
-            url = 'http:' + url;
+            url = 'https:' + url;
         }
         if (type === 'post') {
             fetch(url, {
                 method: 'POST',
-                body: data,
+                body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json',
                     Referer: `https://now.qq.com/`
@@ -126,29 +125,6 @@
         }
     }
 
-    function processStackMsg(error) {
-        let stack = error.stack
-            .replace(/\n/gi, '')
-            .split(/\bat\b/)
-            .slice(0, 9)
-            .join('@')
-            .replace(/\?[^:]+/gi, '');
-        const msg = error.toString();
-        if (stack.indexOf(msg) < 0) {
-            stack = msg + '@' + stack;
-        }
-        return stack;
-    }
-
-    const logMap = {};
-
-    function isRepeat(error, repeat) {
-        if (!isOBJ(error)) return true;
-        const msg = error.msg;
-        const times = logMap[msg] = (parseInt(logMap[msg], 10) || 0) + 1;
-        return times > repeat;
-    }
-
     function buildParam(obj) {
         const str = [];
         for (const k in obj) {
@@ -159,21 +135,14 @@
         return str.join('&');
     }
 
-    function loadPako() {
-        // if (window && window.pako) {
-        return Promise.resolve();
-        // }
-        // return new Promise((resolve, reject) => {
-        // if (document) {
-        //     const script = document.createElement('script')
-        //     script.src = 'https://pub.idqqimg.com/29ee73ea8c294fce8498cb50503521d4.js'
-        //     script.crossOrigin = 'anonymous'
-        //     script.onload = resolve
-        //     script.onerror = reject
-        //     document.getElementsByTagName('head')[0].appendChild(script)
-        // }
-
-        // })
+    function buildParam(obj) {
+        const str = [];
+        for (const k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                str.push(encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]));
+            }
+        }
+        return str.join('&');
     }
 
     class WardjsReportSpeed {
@@ -211,7 +180,14 @@
             });
 
             console.log(sendObj);
-            send(this.url, sendObj, 'post')
+
+            const newData = extend(_config, { duration: sendObj });
+            // console.log(newData)
+            send(this.url, newData, 'post');
+            // const dataString = buildParam(newData);
+            // console.log(`dataString`)
+            // console.log(this.url + '?' + dataString)
+            // send(this.url + '?' + dataString);
         }
 
         // 初始化参数
@@ -221,125 +197,14 @@
                     _config[key] = props[key];
                 }
             }
-            const id = parseInt(_config.id, 10);
-            if (id) {
-                // if (/qq\.com$/gi.test(location.hostname)) {
-                //     if (!_config.url) {
-                //         _config.url = '//now.qq.com/badjs'
-                //     }
-                //
-                //     if (document && document.cookie && !_config.uin) {
-                //         _config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-                //     }
-                // }
 
-                _config._reportUrl = (_config.url || '//now.qq.com/badjs') +
-                    '?id=' + id +
-                    '&uin=' + _config.uin +
-                    '&version=' + _config.version +
-                    // '&from=' + encodeURIComponent(location.href) +
-                    '&';
-                // pv
-                // send(`${_config.url}/${id}`);
-            }
             for (const key in _config) {
                 this[key] = _config[key];
             }
         }
 
-        // 将错误推到缓存池
-        _push(msg, immediately) {
-            const data = isOBJ(msg) ? processError(msg) : {
-                msg: msg
-            };
-
-            // ext 有默认值, 且上报不包含 ext, 使用默认 ext
-            if (this.ext && !data.ext) {
-                data.ext = this.ext;
-            }
-            // 在错误发生时获取页面链接
-            // https://github.com/BetterJS/badjs-report/issues/19
-            if (!data.from) {
-                data.from = this.from || 'qb://ext/nolive';
-            }
-
-            if (data._orgMsg) {
-                delete data._orgMsg;
-                data.level = 2;
-                const newData = extend({}, data);
-                newData.level = 4;
-                newData.msg = data.msg;
-                logList.push(data);
-                logList.push(newData);
-            } else {
-                logList.push(data);
-            }
-
-            this._processLog(immediately);
-            return this;
-        }
-
-        changeUin(uin) {
-            this.uin = uin;
-            this.props.uin = uin;
-            this.log.changeUin(uin);
-        }
-
-        // 上报错误事件
-        report(msg, isReportNow) {
-            msg && this._push(msg, isReportNow);
-            return this;
-        }
-
-        // 上报 info 事件
-        info(msg) {
-            if (!msg) {
-                return this;
-            }
-            if (isOBJ(msg)) {
-                msg.level = 2;
-            } else {
-                msg = {
-                    msg: msg,
-                    level: 2
-                };
-            }
-            this._push(msg);
-            return this;
-        }
-
-        // 上报 debug 事件
-        debug(msg) {
-            if (!msg) {
-                return this;
-            }
-            if (isOBJ(msg)) {
-                msg.level = 1;
-            } else {
-                msg = {
-                    msg: msg,
-                    level: 1
-                };
-            }
-            this._push(msg);
-            return this;
-        }
-
-        // 增加离线日志
-        addOfflineLog(msg) {
-            if (!msg) {
-                return this;
-            }
-            if (isOBJ(msg)) {
-                msg.level = 20;
-            } else {
-                msg = {
-                    msg: msg,
-                    level: 20
-                };
-            }
-            this._push(msg);
-            return this;
+        _sendPost(newData) {
+            send(this.url, newData, 'post');
         }
 
         // 用于统计上报
@@ -368,7 +233,7 @@
     }
 
     const wardjs = new WardjsReportSpeed({
-        url: '//now.qq.com/badjs',
+        url: '//10.65.93.95:6543/aegis/speed',
         id: 525,
         uin: 111111,
         version: 3,
@@ -381,6 +246,42 @@
         }
     });
 
-    wardjs._init();
+    var _onload = window.onload;
+    console.log(_onload);
+    window.onload = function () {
+        wardjs._init();
+        if (_onload && typeof _onload === 'function') {
+            console.log(_onload);
+            _onload();
+        }
+    };
+
+    var _fetch = window.fetch;
+    window.fetch = function () {
+        console.log(`arguments`);
+        console.log(arguments);
+        const _fetchStart = Date.now();
+        return _fetch(...arguments).then(() => {
+            const _responseEnd = Date.now();
+            const _duration = _responseEnd - _fetchStart;
+
+            // const newData = extend(_config, { duration: {
+            //         xmlhttprequest: [
+            //             {
+            //                 name: arguments[0],
+            //                 duration: _duration
+            //             }
+            //         ]
+            //     } });
+            // console.log(newData)
+            // if (wardjs.url) {
+            //     wardjs._sendPost(newData);
+            // }
+
+            console.log(`arguments[0], _duration`);
+            console.log(arguments[0], _duration);
+        });
+    };
+
 </script>
 </html>
