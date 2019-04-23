@@ -125,3 +125,34 @@ window.onload = function () {
     }
 };
 
+var _fetch = window.fetch;
+window.fetch = function () {
+    console.log(`arguments`);
+    console.log(arguments);
+    const _fetchStart = Date.now();
+    return _fetch(...arguments).then(() => {
+        const url = arguments[0];
+        const _responseEnd = Date.now();
+        const _duration = _responseEnd - _fetchStart;
+
+        const newData = extend(_config, {
+            duration: {
+                xmlhttprequest: [
+                    {
+                        name: arguments[0],
+                        duration: _duration
+                    }
+                ]
+            }
+        });
+        console.log(newData);
+        if (wardjs.url) {
+            if (url.indexOf(wardjs.url) === -1) {
+                wardjs._sendPost(newData);
+            }
+        }
+
+        console.log(`url, _duration`);
+        console.log(url, _duration);
+    });
+};

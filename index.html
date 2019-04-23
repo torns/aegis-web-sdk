@@ -37,7 +37,7 @@
 
     function beaconPollyfill(url, data, type) {
         if (url.indexOf('http://') !== 0 || url.indexOf('https://') !== 0) {
-            url = 'https:' + url;
+            url = 'http:' + url;
         }
         if (type === 'post') {
             fetch(url, {
@@ -183,7 +183,8 @@
 
             const newData = extend(_config, { duration: sendObj });
             // console.log(newData)
-            send(this.url, newData, 'post');
+            // send(this.url, newData, 'post');
+            send(this.url, newData, 'get');
             // const dataString = buildParam(newData);
             // console.log(`dataString`)
             // console.log(this.url + '?' + dataString)
@@ -262,26 +263,39 @@
         console.log(arguments);
         const _fetchStart = Date.now();
         return _fetch(...arguments).then(() => {
+            const url = arguments[0];
             const _responseEnd = Date.now();
             const _duration = _responseEnd - _fetchStart;
 
-            // const newData = extend(_config, { duration: {
-            //         xmlhttprequest: [
-            //             {
-            //                 name: arguments[0],
-            //                 duration: _duration
-            //             }
-            //         ]
-            //     } });
-            // console.log(newData)
-            // if (wardjs.url) {
-            //     wardjs._sendPost(newData);
-            // }
+            const newData = extend(_config, {
+                duration: {
+                    xmlhttprequest: [
+                        {
+                            name: arguments[0],
+                            duration: _duration
+                        }
+                    ]
+                }
+            });
+            console.log(newData);
+            if (wardjs.url) {
+                if (url.indexOf(wardjs.url) === -1) {
+                    wardjs._sendPost(newData);
+                }
+            }
 
-            console.log(`arguments[0], _duration`);
-            console.log(arguments[0], _duration);
+            console.log(`url, _duration`);
+            console.log(url, _duration);
         });
     };
 
+    setTimeout(() => {
+        fetch('//now.qq.com/cgi-bin/now/web/user/is_in_white_list?t=0.04242192844578696',
+            {
+                headers: {
+                    Referer: `https://now.qq.com/`
+                }
+            });
+    }, 2000)
 </script>
 </html>
