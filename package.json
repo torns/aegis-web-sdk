@@ -1,44 +1,20 @@
 {
-  "name": "wardjs-report",
-  "version": "0.1.9",
-  "description": "ivweb wardmonitor client report",
-  "main": "dist/index.js",
+  "name": "aegis-report-speed",
+  "version": "1.0.0",
+  "description": "aegis cgi 测速",
+  "main": "index.js",
   "scripts": {
-    "publish": "npm version patch",
-    "prebuild": "rimraf dist",
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "babel-node test/index.js"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.2",
-    "eslint": "^5.11.1",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "rimraf": "^2.6.2",
-    "rollup": "^1.0.0",
-    "rollup-plugin-babel": "^4.1.0",
-    "rollup-plugin-cleanup": "^3.0.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-uglify": "^6.0.0",
-    "uglify-es": "^3.3.9"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iv-web/wardjs-report.git"
+    "url": "http://git.code.oa.com/ivweb/aegis-report-speed.git"
   },
-  "keywords": [
-    "frontend-report",
-    "frontend-performance"
-  ],
-  "bugs": {
-    "url": "https://github.com/iv-web/wardjs-report/issues"
-  },
-  "author": "tickli@tencent.com",
-  "license": "MIT"
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "typescript": "^3.4.5",
+    "webpack": "^4.31.0"
+  }
 }
