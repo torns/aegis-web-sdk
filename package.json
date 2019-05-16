@@ -1,9 +1,10 @@
 {
   "name": "aegis-report-speed",
   "version": "1.0.0",
-  "description": "aegis cgi 测速",
+  "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "node ./build/build.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
