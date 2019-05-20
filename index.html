@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,6 +7,17 @@
     <title>cgi speed</title>
 </head>
 <body>
-    <script src="./dist/index.js"></script>
+    <button onclick="send()">发送请求</button>
+    <script src="./src/index.ts"></script>
+    <script>
+        function send() {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                // console.log(1);
+            }
+            xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
+            xhr.send();
+        }
+    </script>
 </body>
 </html>
