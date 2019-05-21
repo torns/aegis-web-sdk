@@ -1,18 +1,17 @@
 import overrideXhr from './override/overrideXhr';
 
 export default class AegisCgiSpeed{
+    private static instance: AegisCgiSpeed;
+
     constructor() {
-        this.a = 1;
+        if(AegisCgiSpeed.instance) {
+            return AegisCgiSpeed.instance;
+        }
         this.overrideXhr();
     }
-    
-    a: number;
 
     overrideXhr = overrideXhr;
 
-    onRequest() {
-        //TODO
-    }
+    onRequest: any;
 
 }
-new AegisCgiSpeed();
