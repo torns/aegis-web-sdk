@@ -1,6 +1,18 @@
-import onGetResource from './data/index';
-import Resource from './interface/Resource';
+import overrideXhr from './override/overrideXhr';
 
-onGetResource((resource: Resource) => {
-    console.log(resource);
-})
+export default class AegisCgiSpeed{
+    constructor() {
+        this.a = 1;
+        this.overrideXhr();
+    }
+    
+    a: number;
+
+    overrideXhr = overrideXhr;
+
+    onRequest() {
+        //TODO
+    }
+
+}
+new AegisCgiSpeed();

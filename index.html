@@ -12,9 +12,6 @@
     <script>
         function send() {
             const xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                // console.log(1);
-            }
             xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
             xhr.send();
         }

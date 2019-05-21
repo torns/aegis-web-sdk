@@ -1,4 +1,5 @@
 export default interface Resouce {
     name: string,
-    duration: number
+    duration: number,
+    from: string
 }
