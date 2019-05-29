@@ -7,13 +7,19 @@
     <title>cgi speed</title>
 </head>
 <body>
-    <button onclick="send()">发送请求</button>
+    <button onclick="sendXhr()">xhr发送请求</button>
+    <button onclick="sendFetch()">fetch发送请求</button>
     <script src="./src/index.ts"></script>
     <script>
-        function send() {
+        function sendXhr() {
             const xhr = new XMLHttpRequest();
             xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
             xhr.send();
+        }
+        function sendFetch() {
+            fetch('https://api.tone.qq.com/cgi-bin/interface/doRequest').then(function(data){
+                // console.log('data', data);
+            })
         }
     </script>
 </body>
