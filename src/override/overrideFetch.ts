@@ -20,8 +20,6 @@ export default function overrideFetch(this: AegisCgiSpeed) {
             speedLog.responseTime = Date.now();
             speedLog.duration = speedLog.responseTime - speedLog.sendTime;
 
-            debugger;
-
             acs.onResponse(speedLog);
             return res;
         })

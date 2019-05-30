@@ -24,9 +24,8 @@ export default function overrideXhr(this: AegisCgiSpeed) {
             if(xhr.readyState === 4) {
                 xhr.speedLog.responseTime = Date.now();
                 xhr.speedLog.duration = xhr.speedLog.responseTime - xhr.speedLog.sendTime;
-                debugger;
 
-                acs.onResponse(xhr.speedLog);
+                acs.onXhrResponse(xhr.speedLog);
             }
         })
 

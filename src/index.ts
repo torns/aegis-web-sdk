@@ -1,17 +1,38 @@
 import overrideXhr from './override/overrideXhr';
 import overrideFetch from './override/overrideFetch';
-import { SpeedLog } from './interface/log'; 
+import { SpeedLog, EventLog } from './interface/log'; 
+import { extend } from './utils';
 
 interface AegisConfig {
-    id: number | string
+    id: number | string,
+    uin: number | string
 }
 
+function send(url: string, data: object) {
+    const img = new Image();
+
+    const payload = encodeURIComponent(JSON.stringify(data));
+
+    img.src = `${url}?payload=${payload}`;
+}
+
+const BASE_URL = 'http://aegis.qq.com/aegis/speed';
+
 class Aegis{
+    private version = '0.0.1'
+    private delay = 3000;
     private static instance: Aegis;
 
-    private _config: AegisConfig
+    private _config: AegisConfig = {
+        id: '',
+        uin: ''
+    }
 
-    private data = [] // 等待上报的
+    private reportTimer: number = 0
+
+    private eventLog: EventLog[] = [] // 等待上报的日志
+    private speedLog: SpeedLog[] = [] // 等待上报的日志
+    private imageLog: SpeedLog[] = [] // 等待上报的日志
 
     overrideXhr = overrideXhr;
     overrideFetch = overrideFetch;
@@ -43,17 +64,63 @@ class Aegis{
 
     }
 
+    setConfig = (obj: object) => {
+        extend(this._config, obj);
+    }
+
+    processData = () => {
+        return {
+            id: this._config.id,
+            uin: this._config.uin,
+            from: location.href,
+            version: this.version,
+            duration: {
+                script: [this.speedLog]
+            }
+        }
+    }
+
     // 离线日志
     reportOfflineLog = () => {
     }
 
-    // TODO 上报
-    report = () => {
+    // TODO event 上报
+    report = (immediately = false) => {
+        if(this.reportTimer) {
+            return;
+        }
 
+        this.reportTimer = setTimeout(() => {
+            send(BASE_URL, this.processData());
+
+            this.imageLog = [];
+            this.speedLog = [];
+            this.eventLog = [];
+
+            this.reportTimer = 0;
+        }, this.delay);
+    }
+
+    addSpeedLog(data: SpeedLog) {
+        this.speedLog.push(data);
+    }
+
+    addImageLog(data: SpeedLog) {
+        this.imageLog.push(data);
     }
 
     // 请求返回时
-    onResponse(data: SpeedLog) {
+    onXhrResponse(data: SpeedLog) {
+        this.addSpeedLog(data);
+        this.report();
+    }
+
+    onImageResponse(data: SpeedLog) {
+        this.addImageLog(data);
+        this.report();
+    }
+
+    onEventResponse() {
 
     }
 }
