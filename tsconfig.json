@@ -1,11 +1,22 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "removeComments": true,
-        "sourceMap": true,
-        "alwaysStrict": true,
-        "noErrorTruncation": true,
+        "module": "commonjs",
         "target": "es5",
-        "importHelpers": true
-    }
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",  // TS文件编译后会放入到此文件夹内
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ]
+        }
+    },
+    "include": [
+        "*.json",
+        "src/**/*"
+    ]
 }

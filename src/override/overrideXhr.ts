@@ -1,9 +1,10 @@
 import AegisCgiSpeed from '../index';
-import Resource from './Resource';
+import { SpeedLog } from '../interface/log';
 
 const xhrProto = (<any>window).XMLHttpRequest.prototype,
       originOpen = xhrProto.open,
       originSend = xhrProto.send;
+
 
 export default function overrideXhr(this: AegisCgiSpeed) {
     const acs = this;
@@ -12,29 +13,32 @@ export default function overrideXhr(this: AegisCgiSpeed) {
     xhrProto.open = function(method: string, url: string) {
         const xhr = this,
               args = arguments;
-
-        Object.defineProperty(xhr, 'aegisResource', {
-            value: new Resource({
-                from: location.href,
-                url: url,
-                method: method
-            }),
-            enumerable: false,
-            configurable: false
-        })
+        
+        xhr.speedLog = {
+            url,
+            method,
+            openTime: Date.now()
+        } as SpeedLog;
         
         xhr.addEventListener('readystatechange', function() {
-            xhr.aegisResource.onreadystatechange(xhr.readyState, acs);
+            if(xhr.readyState === 4) {
+                xhr.speedLog.responseTime = Date.now();
+                xhr.speedLog.duration = xhr.speedLog.responseTime - xhr.speedLog.sendTime;
+                debugger;
+
+                acs.onResponse(xhr.speedLog);
+            }
         })
 
-        xhr.aegisResource.open();
         return originOpen.apply(xhr, args);
     }
 
-    //改写send
+    // //改写send
     xhrProto.send = function() {
         const xhr = this;
-        xhr.aegisResource.send();
+
+        xhr.speedLog.sendTime = Date.now();
+
         return originSend.apply(xhr, arguments);
     }
 }

@@ -24,11 +24,10 @@ export default class Resource {
         this.sendTime = new Date().getTime();
     }
 
-    onreadystatechange(readyState: number, acs: AegisCgiSpeed){
-        if(readyState === 4) {
+    onreadystatechange(xhr, acs: AegisCgiSpeed){
+        if(xhr.readyState === 4) {
             this.responseTime = new Date().getTime();
             this.duration = this.responseTime - this.sendTime;
-            acs.onRequest && acs.onRequest(this);
         }
     }
 }

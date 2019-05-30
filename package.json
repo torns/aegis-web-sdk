@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html",
+    "start": "npm run dev",
+    "dev": "parcel test/example/index.html -p 3001",
     "build": "parcel build ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,12 +14,9 @@
     "url": "http://git.code.oa.com/ivweb/aegis-report-speed.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "parcel": "^1.12.3",
     "typescript": "^3.4.5"
-  },
-  "dependencies": {
-    "tslib": "^1.9.3"
   }
 }
