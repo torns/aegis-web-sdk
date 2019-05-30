@@ -2,10 +2,7 @@
     "compilerOptions": {
         "strict": true,
         "removeComments": true,
-        "sourceMap": true,
-        "alwaysStrict": true,
         "noErrorTruncation": true,
         "target": "es5",
-        "importHelpers": true
     }
 }

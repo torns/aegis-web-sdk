@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html",
-    "build": "parcel build ./src/index.ts",
+    "dev": "parcel ./test/index.html",
+    "build": "node ./build/build.prd.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "parcel": "^1.12.3",
+    "parcel-bundler": "^1.12.3",
     "typescript": "^3.4.5"
   },
   "dependencies": {
