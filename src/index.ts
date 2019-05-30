@@ -1,19 +1,22 @@
 import overrideXhr from './override/overrideXhr';
 import overrideFetch from './override/overrideFetch';
+import { SpeedLog } from './interface/log'; 
+
+interface AegisConfig {
+    id: number | string
+}
 
 class Aegis{
     private static instance: Aegis;
 
-    _config = {
-        id: '', // 项目id
-    }
+    private _config: AegisConfig
 
-    data = [] // 等待上报的
+    private data = [] // 等待上报的
 
     overrideXhr = overrideXhr;
     overrideFetch = overrideFetch;
 
-    constructor(opts) {
+    constructor(opts: AegisConfig) {
         if(Aegis.instance) {
             return Aegis.instance;
         }
@@ -25,25 +28,32 @@ class Aegis{
 
         this._config = opts;
 
-        this._bindXhrEvent();
+        this.bindXhrEvent();
+
+        //TODO bind
     }
 
-    _bindXhrEvent() {
+    private bindXhrEvent() {
         this.overrideXhr();
         this.overrideFetch();
     }
 
+    // TODO 
+    private bindImgEvent() {
+
+    }
+
     // 离线日志
-    _offlineLog = () => {
+    reportOfflineLog = () => {
     }
 
     // TODO 上报
-    _report = () => {
+    report = () => {
 
     }
 
     // 请求返回时
-    onResponse(Resource) {
+    onResponse(data: SpeedLog) {
 
     }
 }
