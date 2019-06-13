@@ -9,7 +9,7 @@ interface AegisConfig {
 class Aegis{
     private static instance: Aegis;
 
-    private _config: AegisConfig
+    private _config?: AegisConfig
 
     private data = [] // 等待上报的
 
