@@ -11,6 +11,7 @@
         "strict": true,
         "removeComments": true,
         "noErrorTruncation": true,
+        "strictNullChecks": false,
         "paths": {
             "*": [
                 "node_modules/*",

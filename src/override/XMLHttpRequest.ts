@@ -1,11 +1,15 @@
 import { SpeedLog } from '../interface/log';
 
-const xhrProto = (<any>window).XMLHttpRequest.prototype,
-      originOpen = xhrProto.open,
-      originSend = xhrProto.send;
+let alreadyOverride: boolean = false;
 
+export default function overrideXhr(notify: Function) {
+    if(alreadyOverride) return;
+    alreadyOverride = true;
 
-export default function overrideXhr(callback: Function) {
+    const xhrProto = (<any>window).XMLHttpRequest.prototype,
+    originOpen = xhrProto.open,
+    originSend = xhrProto.send;
+
     //改写open
     xhrProto.open = function(method: string, url: string) {
         const xhr = this,
@@ -22,7 +26,7 @@ export default function overrideXhr(callback: Function) {
                 xhr.speedLog.responseTime = Date.now();
                 xhr.speedLog.duration = xhr.speedLog.responseTime - xhr.speedLog.sendTime;
 
-                callback(xhr.speedLog);
+                notify && notify(xhr.speedLog);
             }
         })
 
