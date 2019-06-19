@@ -1,9 +1,12 @@
-import AegisCgiSpeed from '../index';
 import { SpeedLog } from '../interface/log';
 
-const originFetch = (<any>window).fetch;
-export default function overrideFetch(this: AegisCgiSpeed) {
-    const acs = this;
+let alreadyOverride: boolean = false;
+
+export default function overrideFetch(notify: Function) {
+    if(alreadyOverride) return;
+    alreadyOverride = true;
+
+    const originFetch = (<any>window).fetch;
 
     (<any>window).fetch = function() {
         const args = Array.prototype.slice.call(arguments);
@@ -20,9 +23,7 @@ export default function overrideFetch(this: AegisCgiSpeed) {
             speedLog.responseTime = Date.now();
             speedLog.duration = speedLog.responseTime - speedLog.sendTime;
 
-            debugger;
-
-            acs.onResponse(speedLog);
+            notify && notify(speedLog);
             return res;
         })
 

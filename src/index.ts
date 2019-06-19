@@ -1,46 +1,26 @@
-import overrideXhr from './override/overrideXhr';
-import overrideFetch from './override/overrideFetch';
 import { SpeedLog } from './interface/log'; 
+import imageSpeed from './log/imageSpeed';
+import cgiSpeed from './log/cgiSpeed';
 
 interface AegisConfig {
     id: number | string
 }
 
 class Aegis{
-    private static instance: Aegis;
-
     private _config?: AegisConfig
 
-    private data = [] // 等待上报的
-
-    overrideXhr = overrideXhr;
-    overrideFetch = overrideFetch;
+    private data:[] = [] // 等待上报的
 
     constructor(opts: AegisConfig) {
-        if(Aegis.instance) {
-            return Aegis.instance;
-        }
-
-        if(!opts.id) {
+        if(!opts || !opts.id) {
             console.error('not define aegis project id, init fail');
             return;
         }
 
         this._config = opts;
 
-        this.bindXhrEvent();
-
-        //TODO bind
-    }
-
-    private bindXhrEvent() {
-        this.overrideXhr();
-        this.overrideFetch();
-    }
-
-    // TODO 
-    private bindImgEvent() {
-
+        imageSpeed.observe(this.logPipe);
+        cgiSpeed.observe(this.logPipe);
     }
 
     // 离线日志
@@ -51,10 +31,9 @@ class Aegis{
     report = () => {
 
     }
-
-    // 请求返回时
-    onResponse(data: SpeedLog) {
-
+    
+    logPipe = (log: SpeedLog) => {
+        console.log(log);
     }
 }
 
