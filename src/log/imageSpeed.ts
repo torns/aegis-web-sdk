@@ -22,9 +22,17 @@ export default new Observer(function (notify: Function) {
 
                 // 属性变化
                 case 'attributes': 
+                    if(!(mutation.target instanceof Element)) return;
+                    
+                    if(mutation.attributeName === 'src' && mutation.target instanceof HTMLImageElement) {
+                        domChangeHandler(mutation.target, notify);
+                    } else {
+                        // TODD 需要判断修改前后是否有改动到background-images
+                        const backgroundImage = getComputedStyle(mutation.target).backgroundImage;
+                        if(!backgroundImage || backgroundImage === 'none') return;
 
-
-                    notify(mutation);
+                        attributeChangeHandler(mutation, backgroundImage);
+                    }
                     break;
             }
         })
@@ -34,12 +42,14 @@ export default new Observer(function (notify: Function) {
         attributes: true,
         childList: true,
         subtree: true,
+        attributeOldValue: true,
         attributeFilter: ['src', 'style', 'class']
     })
 })
 
 function domChangeHandler (e: Element, notify: Function) {
-    if(e instanceof HTMLImageElement && e.src) {
+    // 之所以不能等于当前location.href，是因为在chrome中如果src没赋值，会默认取到location.href
+    if(e instanceof HTMLImageElement && e.src && e.src !== location.href) {
         // img且有src属性
         const speedLog: SpeedLog = {
             url: e.src,
@@ -55,12 +65,27 @@ function domChangeHandler (e: Element, notify: Function) {
             notify(speedLog);
         })
     } else {
+        // TODO 这里可能会有点耗性能
         // 标签有background-image
         const backgroundImage = getComputedStyle(e).backgroundImage;
-        if(!backgroundImage && backgroundImage === 'none') return;
-        
+        if(!backgroundImage || backgroundImage === 'none') return;
         // 创建改写过的Image实例触发图片测速
         let url = backgroundImage.replace(/^url\("/, '').replace(/"\)$/,'');
         new Image().src = url;
     }
+}
+
+// 新建一个游离的div用来获取属性修改之前的background-iamge
+const div = document.createElement('div');
+function attributeChangeHandler (mutation: MutationRecord, newBackgroundImage: string) {
+    const attributeName = mutation.attributeName;
+    div.setAttribute(attributeName, mutation.oldValue);
+    const beforeBackgroundImage = window.getComputedStyle(div).backgroundImage;
+
+    if(beforeBackgroundImage !== newBackgroundImage) {
+        let url = newBackgroundImage.replace(/^url\("/, '').replace(/"\)$/,'');
+        new Image().src = url;
+    }
+
+    div.setAttribute(attributeName, '');
 }

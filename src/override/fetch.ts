@@ -14,7 +14,8 @@ export default function overrideFetch(notify: Function) {
         const speedLog: SpeedLog = {
             url: args[0],
             method: args[1] ? args[1].method || 'get' : 'get',
-            openTime: Date.now()
+            openTime: Date.now(),
+            sendTime: Date.now()
         };
 
         const fetchPromise = originFetch(...args);

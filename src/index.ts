@@ -19,7 +19,9 @@ class Aegis{
 
         this._config = opts;
 
+        // 订阅图片测速日志
         imageSpeed.observe(this.logPipe);
+        // 订阅cgi测速日志
         cgiSpeed.observe(this.logPipe);
     }
 
@@ -32,6 +34,7 @@ class Aegis{
 
     }
     
+    // 获取日志pipe
     logPipe = (log: SpeedLog) => {
         console.log(log);
     }
