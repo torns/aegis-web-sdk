@@ -1,4 +1,5 @@
-import { SpeedLog } from './interface/log'; 
+import { Reporter } from './core/reporter';
+import { SpeedLog } from './interface/log';
 import imageSpeed from './log/imageSpeed';
 import cgiSpeed from './log/cgiSpeed';
 
@@ -43,3 +44,6 @@ class Aegis{
 export default Aegis;
 
 (<any>window).Aegis = Aegis; // 挂载window 暴露
+(function(_obj : any) {
+    _obj['Aegis'] = Reporter;
+})(window);
