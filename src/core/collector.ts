@@ -1,6 +1,6 @@
 import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interface/log'; 
-import overrideXhr from '../override/overrideXhr';
-import overrideFetch from '../override/overrideFetch';
+import overrideXhr from '../override/XMLHttpRequest';
+import overrideFetch from '../override/fetch';
 import { isOBJByType, formatStackMsg } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 // 上报收集器
