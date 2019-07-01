@@ -2,8 +2,8 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig, ErrorMsg } from '
 import Collector from './collector';
 import Processor from './processor';
 import OfflineLog from '../helper/offlinelog';
-import { send, formatParams } from '../helper/send';
-import { extend } from '../utils/index';
+import { send, formatParams, sendOffline } from '../helper/send';
+import { extend, buildParam } from '../utils/index';
 
 let instance: Reporter;
 
@@ -40,52 +40,59 @@ export class Reporter {
     private _reportUrl!: string
     private _reportTask!: number
 
-    constructor(config: AegisConfig) {
+    constructor(config?: AegisConfig) {
         if(instance) {
             return instance;
         } else {
             instance = this;
         }
 
-        this._config = extend(baseConfig, config) as AegisConfig;
+        const _config = this.setConfig(config);
 
-        const id = parseInt(config.id as string, 10);
-
-        if (id) {
-            if (/qq\.com$/gi.test(location.hostname)) {
-                if (!config.url) {
-                    config.url = '//aegis.qq.com/badjs'
-                }
-
-                if (!config.uin) {
-                    config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-                }
-            }
-
-            this._reportUrl = (config.url || '//aegis.qq.com/badjs') +
-                '?id=' + id +
-                '&uin=' + this._config.uin +
-                '&version=' + this._config.version +
-                // '&from=' + encodeURIComponent(location.href) +
-                '&'
-        } else {
-            console.error('please check badjsid!!!')
-            return;
+        this._collector = new Collector(this._config);
+        this._processor = new Processor(this._config);
+        
+        if (this._config.offlineLog) {
+            this._initOffline();
         }
 
         this.reportPv();
 
-        this._config = config;
-
-        this._collector = new Collector(config);
-        this._processor = new Processor(config);
-        
-        this._offlineLog = new OfflineLog();
-        
-
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.handlerRecevieXhr)
         this._collector.on('onRecevieImage', this.handlerRecevieImage);
+    }
+
+    setConfig = (config: AegisConfig) => {
+        this._config = extend(baseConfig, this._config, config) as AegisConfig;
+
+        const id = parseInt(config.id as string, 10);
+
+        if (!id) {
+            console.log('aegis 初始化失败 未传入项目id');
+            return;
+        }
+
+        if (/qq\.com$/gi.test(location.hostname)) {
+            if (!config.uin) {
+                config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
+            }
+        }
+        
+        if (!config.url) {
+            config.url = '//aegis.qq.com/badjs'
+        }
+
+        this._reportUrl = (config.url || '//aegis.qq.com/badjs') +
+            '?id=' + id +
+            '&uin=' + this._config.uin +
+            '&version=' + this._config.version +
+            '&from=' + encodeURIComponent(location.href) +
+            '&'
+
+        this._config = config;
+
+        return this._config;
     }
 
     reportPv() {
@@ -93,7 +100,6 @@ export class Reporter {
     }
 
     handlerRecevieError = (data) => {
-        debugger;
         this.error(data, true);
     }
 
@@ -157,7 +163,6 @@ export class Reporter {
         }
 
         this._processor.processNormalLog(msg, LOG_TYPE.DEBUG, (_msg: NormalLog) => {
-            debugger;
             this.report(_msg, immediately);
         }, (err: any) => {
             // TODO 
@@ -183,5 +188,106 @@ export class Reporter {
     // 测速
     speed (event: string, time: number) {
 
+    }
+
+    // 用于统计上报
+    static monitor (n, monitorUrl = '//report.url.cn/report/report_vm') {
+        // 如果n未定义或者为空，则不处理
+        if (typeof n === 'undefined' || n === '') {
+            return
+        }
+
+        // 如果n不是数组，则将其变成数组。注意这里判断方式不一定完美，却非常简单
+        if (typeof n.join === 'undefined') {
+            n = [n]
+        }
+
+        const p = {
+            monitors: '[' + n.join(',') + ']',
+            _: Math.random()
+        }
+
+        if (monitorUrl) {
+            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p)
+
+            new Image().src = _url
+        }
+    }
+
+    // 初始化离线数据库
+    _initOffline = () => {
+        this._offlineLog = new OfflineLog();
+
+        this._offlineLog.ready((err: any) => {
+            if (err) {
+                return;
+            }
+
+            setTimeout(() => {
+                this._offlineLog.clearDB(this._config.offlineLogExp);
+                setTimeout(() => {
+                    this._config.offlineLogAuto && this._autoReportOffline();
+                }, 5000);
+            }, 1000);
+        });
+
+        return this;
+    }
+
+    // 询问服务器是否上报离线日志
+    _autoReportOffline = () => {
+        const script = document.createElement('script');
+        script.src = `${this._config.url}/offlineAuto?id=${this._config.id}&uin=${this._config.uin}`;
+        // 通过 script 的返回值执行回调
+        (<any>window)._badjsOfflineAuto = (secretKey: any) => {
+            if (secretKey) {
+                this.reportOfflineLog(secretKey)
+            }
+            document.head.removeChild(script);
+        }
+        document.head.appendChild(script);
+    }
+
+    // 上报离线日志
+    reportOfflineLog = (secretKey: any) => {
+        if (!window.indexedDB) {
+            this.info('unsupport offlineLog')
+            return
+        }
+
+        this._offlineLog.ready((err: any) => {
+            if (err) {
+                return;
+            }
+
+            const startDate = Date.now() - this._config.offlineLogExp * 24 * 3600 * 1000;
+            const endDate = Date.now();
+            this._offlineLog.getLogs({
+                start: startDate,
+                end: endDate,
+                id: this._config.id,
+                uin: this._config.uin
+            }, (err: any, logs: any, msgObj: any, urlObj: any) => {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+                console.log('offline logs length:', logs.length)
+                const reportData = { logs, msgObj, urlObj, startDate, endDate, secretKey }
+
+                const { id, uin, url } = this._config;
+                const { userAgent } = navigator
+        
+                let data = JSON.stringify(extend(reportData, {
+                    userAgent,
+                    id,
+                    uin
+                }));
+        
+                const _url = url + '/offlineLog';
+        
+                sendOffline(_url, data)
+            })
+        })
     }
 }

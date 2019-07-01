@@ -1,7 +1,7 @@
 import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interface/log'; 
 import overrideXhr from '../override/XMLHttpRequest';
 import overrideFetch from '../override/fetch';
-import { isOBJByType, formatStackMsg } from '../utils';
+import { isOBJByType, formatStackMsg, formatError } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 // 上报收集器
 
@@ -57,27 +57,13 @@ export default class Collector extends EventEmiter {
         this.emit('onRecevieEvent', data);
     }
 
-    onGlobalError(msg: object | Event | string, url: string | undefined, line: number | undefined, col: number | undefined, error: Error | undefined) {
-        let newMsg = '';
-
-        if (error && error.stack) {
-            newMsg = formatStackMsg(error);
-        }
-
-        if (isOBJByType(newMsg, 'Event')) {
-            const eventMsg = msg as Event;
-            newMsg += eventMsg.type
-                ? ('--' + eventMsg.type + '--' + (eventMsg.target
-                    ? (eventMsg.target.tagName + '::' + eventMsg.target.src) : '')) : ''
-        } else {
-            newMsg = msg as string;
-        }
-
+    onGlobalError(msg: object | Event | string, url: string | undefined, row: number | undefined, col: number | undefined, error: Error | undefined) {
         this.emit('onRecevieError', {
-            msg: newMsg,
-            target: url,
-            rowNum: line,
-            colNum: col
+            msg,
+            url,
+            row,
+            col,
+            error
         });
     }
 }

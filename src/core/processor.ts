@@ -1,9 +1,11 @@
 import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig, ErrorMsg } from '../interface/log'; 
 import InterceptorManager from '../helper/interceptors-manager';
+import formatLog from '../interceptors/formatlog';
 import ignore from '../interceptors/ignore';
 import repeatLimit from '../interceptors/repeat-limit';
 import lengthLimit from '../interceptors/length-limit';
 import sampling from '../interceptors/sampling';
+import { isOBJ } from '../utils/index';
 
 let instance: Processor;
 
@@ -18,17 +20,13 @@ export default class Processor{
 
         this.logInterceptor = new InterceptorManager();
 
+        this.logInterceptor.use(formatLog());
         this.logInterceptor.use(sampling(config.random));
         this.logInterceptor.use(lengthLimit(config.maxLength));
         this.logInterceptor.use(repeatLimit(config.repeat));
         this.logInterceptor.use(ignore(config.ignore));
     }
 
-    // 错误日志
-    processErrorLog(msg: string | Error, logType = LOG_TYPE.ERROR, success: Function, fail ?: Function) {
-        msg.level = logType;
-        this.logInterceptor.run(msg, success, fail);
-    }
 
     // 测速日志
     processSpeedLog(logs: SpeedLog) {
@@ -41,12 +39,12 @@ export default class Processor{
     }
 
     // 普通日志
-    processNormalLog(msg: string | ErrorMsg, logType: LOG_TYPE, success: Function, fail ?: Function) {
-        const data = isOBJ(msg) ? processError(msg) : {
-            msg: msg
-        }
+    processNormalLog(_msg: any, logType: LOG_TYPE, success: Function, fail ?: Function) {
+        const msg = isOBJ(_msg) ? _msg : {
+            msg: _msg
+        };
 
-        data.level = logType;
-        this.logInterceptor.run(data, success, fail);
+        msg.level = logType;
+        this.logInterceptor.run(msg, success, fail);
     }
 }

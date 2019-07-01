@@ -20,7 +20,8 @@ export interface NormalLog {
     msg: string,
     target: string,
     rowNum: number,
-    colNum: number
+    colNum: number,
+    level: LOG_TYPE
 }
 
 export enum LOG_TYPE {
@@ -34,7 +35,6 @@ export interface ErrorMsg {
     rowNum: string
     colNum: string
     target: string
-    _orgMsg: string
     level: LOG_TYPE
 }
 

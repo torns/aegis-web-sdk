@@ -28,9 +28,14 @@ export default class InterceptorManager {
         return this.handlers.length - 1;
     }
 
-    run = (data: any, _resolve: Function, _reject = defaultFail) => {
-        if(this.handlers.length > 0) {
-            const handler = this.handlers.shift();
+    run = (data: any, _resolve: Function, _reject: Function = defaultFail) => {
+        const handlers = this.handlers.concat({
+            resolve: _resolve,
+            reject: _reject
+        });
+
+        function _run(data: any) {
+            const handler = handlers.shift();
 
             if(handler) {
                 const {
@@ -39,18 +44,18 @@ export default class InterceptorManager {
                 } = handler as handler;
                 
                 resolve(data, (_data: any) => {
-                    this.run(_data, _resolve, _reject);
+                    _run(_data);
                 }, (err: any) => {
                     if (reject) {
                         reject(err);
-                    } else if( _reject) {
-                        _reject(err);
+                    } else {
+                        _reject && _reject(err);
                     }
                 });
             }
-        } else {
-            _resolve(data);
         }
+
+        _run(data);
     }
 
     /**
