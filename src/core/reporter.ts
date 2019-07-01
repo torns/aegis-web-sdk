@@ -104,11 +104,11 @@ export class Reporter {
     }
 
     handlerRecevieXhr = (data) => {
-
+        console.log(data);
     }
 
     handlerRecevieImage = (data) => {
-
+        console.log(data);
     }
     
     submitLog = (msg: any[] | any) => {

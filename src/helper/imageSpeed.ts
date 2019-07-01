@@ -1,13 +1,18 @@
-import Observer from '../pattern/Observer';
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
 
-export default new Observer(function (notify: Function) {
+let observeDom: MutationObserver;
+
+export default function (emit: Function) {
     // 改写Image构造函数
-    overrideImage(notify);
+    overrideImage(emit);
+
+    if (observeDom && observeDom instanceof MutationObserver) {
+        observeDom.disconnect();
+    }
 
     // 监听dom变化
-    const observeDom = new MutationObserver(function (mutations) {
+    observeDom = new MutationObserver(function (mutations) {
         mutations.forEach(mutation => {
             switch(mutation.type) {
                 // dom操作
@@ -15,7 +20,7 @@ export default new Observer(function (notify: Function) {
                     mutation.addedNodes.length && mutation.addedNodes.forEach(e => {
                         if(e instanceof Element) {
                             // 元素节点
-                            domChangeHandler(e, notify);
+                            domChangeHandler(e, emit);
                         }
                     })
                     break;
@@ -25,7 +30,7 @@ export default new Observer(function (notify: Function) {
                     if(!(mutation.target instanceof Element)) return;
                     
                     if(mutation.attributeName === 'src' && mutation.target instanceof HTMLImageElement) {
-                        domChangeHandler(mutation.target, notify);
+                        domChangeHandler(mutation.target, emit);
                     } else {
                         // TODD 需要判断修改前后是否有改动到background-images
                         const backgroundImage = getComputedStyle(mutation.target).backgroundImage;
@@ -45,9 +50,9 @@ export default new Observer(function (notify: Function) {
         attributeOldValue: true,
         attributeFilter: ['src', 'style', 'class']
     })
-})
+}
 
-function domChangeHandler (e: Element, notify: Function) {
+function domChangeHandler (e: Element, emit: Function) {
     // 之所以不能等于当前location.href，是因为在chrome中如果src没赋值，会默认取到location.href
     if(e instanceof HTMLImageElement && e.src && e.src !== location.href) {
         // img且有src属性
@@ -62,7 +67,7 @@ function domChangeHandler (e: Element, notify: Function) {
         e.addEventListener('load', () => {
             speedLog.responseTime = Date.now();
             speedLog.duration = speedLog.responseTime - speedLog.sendTime;
-            notify(speedLog);
+            emit(speedLog);
         })
     } else {
         // TODO 这里可能会有点耗性能
@@ -75,7 +80,7 @@ function domChangeHandler (e: Element, notify: Function) {
     }
 }
 
-// 新建一个游离的div用来获取属性修改之前的background-iamge
+// 新建一个游离的div用来获取属性修改之前的background-image
 const div = document.createElement('div');
 function attributeChangeHandler (mutation: MutationRecord, newBackgroundImage: string) {
     const attributeName = mutation.attributeName;
