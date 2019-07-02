@@ -52,12 +52,12 @@ export default class Collector extends EventEmiter {
         this.emit('onRecevieEvent', data);
     }
 
-    onGlobalError(msg: object | Event | string, url: string | undefined, row: number | undefined, col: number | undefined, error: Error | undefined) {
+    onGlobalError(msg: object | Event | string, target: string | undefined, rowNum: number | undefined, colNum: number | undefined, error: Error | undefined) {
         this.emit('onRecevieError', {
             msg,
-            url,
-            row,
-            col,
+            target,
+            rowNum,
+            colNum,
             error
         });
     }

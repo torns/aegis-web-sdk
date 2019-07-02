@@ -143,6 +143,7 @@ export class Reporter {
 
             // 默认全部写入离线日志
             const prefix = 'badjs_' + this._config.id + this._config.uin;
+
             offline.save2Offline(prefix, msg, this._config);
         }
         
@@ -178,7 +179,7 @@ export class Reporter {
     }
 
     error = (msg: any, immediately = false) => {
-        this._processor.processErrorLog(msg, LOG_TYPE.ERROR, (_msg: NormalLog) => {
+        this._processor.processNormalLog(msg, LOG_TYPE.ERROR, (_msg: NormalLog) => {
             this.report(_msg, immediately);
         }, (err: any) => {
             // TODO 

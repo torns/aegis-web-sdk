@@ -5,7 +5,7 @@ import ignore from '../interceptors/ignore';
 import repeatLimit from '../interceptors/repeat-limit';
 import lengthLimit from '../interceptors/length-limit';
 import sampling from '../interceptors/sampling';
-import { isOBJ } from '../utils/index';
+import { isOBJ, extend } from '../utils/index';
 
 let instance: Processor;
 
@@ -40,11 +40,12 @@ export default class Processor{
 
     // 普通日志
     processNormalLog(_msg: any, logType: LOG_TYPE, success: Function, fail ?: Function) {
-        const msg = isOBJ(_msg) ? _msg : {
+        const msg = isOBJ(_msg) ? extend({}, _msg, {
+            level: logType
+        }) : {
             msg: _msg
         };
 
-        msg.level = logType;
         this.logInterceptor.run(msg, success, fail);
     }
 }
