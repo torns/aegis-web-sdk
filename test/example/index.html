@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>cgi speed</title>
+    <style>
+        .a {
+            background-image: url('https://avatars1.githubusercontent.com/u/21698272?s=40&v=4');
+        }
+    </style>
+    <!-- aegis -->
+    <script src="../../src/index.ts"></script>
+</head>
+<body>
+    <button onclick="sendXhr()">xhr发送请求</button>
+    <button onclick="sendFetch()">fetch发送请求</button><br>
+    <button onclick="insertImage()">插入img标签</button>
+    <button onclick="insertBackgroundImage()">插入带background-image的标签</button>
+    <button onclick="newImage()">新建Image实例</button>
+    <button onclick="changeSrc()">修改src属性</button>
+    <button onclick="changeClass()">修改class属性</button>
+    <div id="imageBox" class="b c">
+        <img id="img" src=""/>
+        <!-- <img style="background-image:url('https://avatars1.githubusercontent.com/u/21698272?s=40&v=4')" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"> -->
+    </div>
+
+    <script>
+        a = new Aegis({
+            id: 111,
+            url: '//10.65.94.92:6543/aegis'
+        })
+
+        // 压测
+        // setInterval(() => {
+        //     insertBackgroundImage();
+        // }, 10)
+
+        function sendXhr() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
+            xhr.send();
+        }
+        function sendFetch() {
+            fetch(`https://api.tone.qq.com/cgi-bin/interface/doRequest?t=${Math.floor(Math.random() * 100)}`)
+        }
+        function insertImage() {
+            let img = document.createElement('img');
+            document.getElementById("imageBox").append(img);
+            img.src = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+        }
+        function insertBackgroundImage() {
+            const e = document.createElement('div');
+            e.style.backgroundImage = `url("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png?t=${Math.floor(Math.random() * 100)}")`;
+            document.getElementById("imageBox").append(e);
+        }
+        function newImage() {
+            new Image().src = `https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png?t=${Math.floor(Math.random() * 100)}`;
+        }
+        function changeSrc() {
+            document.getElementById("img").src = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+        }
+        function changeClass() {
+            document.getElementById("imageBox").setAttribute('class', 'a');
+        }
+    </script>
+</body>
+</html>
