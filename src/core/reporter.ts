@@ -10,6 +10,8 @@ let instance: Reporter;
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
     uin: 0, // user id
+    isDebug: false,
+    isWhiteList: false,
     url: '//aegis.qq.com/badjs', // 上报接口
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
@@ -18,7 +20,6 @@ const baseConfig: AegisConfig = {
     random: 1, // 抽样 (0-1] 1-全量
     delay: 1000, // 延迟上报
     maxLength: 500, // 每条日志内容最大长度，通常不建议修改
-    submit: null, // 自定义上报方式
     monitorUrl: '//report.url.cn/report/report_vm', // 自定义统计上报地址
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
@@ -99,15 +100,15 @@ export class Reporter {
         send(`${this._config.url}/${this._config.id}`);
     }
 
-    handlerRecevieError = (data) => {
+    handlerRecevieError = (data: any) => {
         this.error(data, true);
     }
 
-    handlerRecevieXhr = (data) => {
+    handlerRecevieXhr = (data: any) => {
         console.log(data);
     }
 
-    handlerRecevieImage = (data) => {
+    handlerRecevieImage = (data: any) => {
         console.log(data);
     }
     
@@ -192,15 +193,15 @@ export class Reporter {
     }
 
     // 用于统计上报
-    static monitor (n, monitorUrl = '//report.url.cn/report/report_vm') {
+    static monitor (n: any, monitorUrl = '//report.url.cn/report/report_vm') {
         // 如果n未定义或者为空，则不处理
         if (typeof n === 'undefined' || n === '') {
-            return
+            return;
         }
 
         // 如果n不是数组，则将其变成数组。注意这里判断方式不一定完美，却非常简单
         if (typeof n.join === 'undefined') {
-            n = [n]
+            n = [n];
         }
 
         const p = {
@@ -209,9 +210,9 @@ export class Reporter {
         }
 
         if (monitorUrl) {
-            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p)
+            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p);
 
-            new Image().src = _url
+            new Image().src = _url;
         }
     }
 

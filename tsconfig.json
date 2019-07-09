@@ -6,7 +6,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "dist",  // TS文件编译后会放入到此文件夹内
+        "outDir": "lib",  // TS文件编译后会放入到此文件夹内
         "baseUrl": ".",
         "strict": true,
         "removeComments": true,
@@ -20,7 +20,6 @@
         }
     },
     "include": [
-        "*.json",
         "src/**/*"
     ]
 }

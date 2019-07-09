@@ -8,8 +8,8 @@ export default function overrideImage (notify: Function) {
 
     const realImage = (<any>window).Image;
 
-    (<any>window).Image = function (...args: any) {
-        const img = new realImage(...args);
+    (<any>window).Image = function (width: any, height: any) {
+        const img = new realImage(width, height);
         const speedLog: SpeedLog = {
             method: 'get',
             openTime: Date.now(),

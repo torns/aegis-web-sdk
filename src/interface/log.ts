@@ -43,7 +43,7 @@ export interface AegisConfig {
     uin: number | string
     version: number
     url: string
-    speedApi: string
+    speedApi ?: string
     ext: object | null
     level: number
     ignore: any[]
@@ -53,11 +53,11 @@ export interface AegisConfig {
     repeat: number
     isDebug: boolean
     isWhiteList: boolean
-    submit: Function | null
     monitorUrl: '//report.url.cn/report/report_vm' // 自定义统计上报地址
-    offlineLog: false
+    offlineLog: boolean
     offlineLogExp: number // 离线日志过期时间，默认3天
-    offlineLogAuto: false // 是否自动询问服务器需要自动上报
-    onReport:Function // 与上报同时触发，用于统计相关内容
-    beforeReport: Function // aop：上报前执行，如果返回 false 则不上报
+    offlineLogAuto: boolean // 是否自动询问服务器需要自动上报
+    submit ?: Function
+    onReport ?:Function // 与上报同时触发，用于统计相关内容
+    beforeReport ?: Function // aop：上报前执行，如果返回 false 则不上报
 }

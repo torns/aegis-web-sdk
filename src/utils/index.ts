@@ -55,11 +55,15 @@ export function formatStackMsg (error: Error) {
     return stack;
 }
 
-export function buildParam (obj: object) {
+interface stringObj {
+    [propName: string]: any
+}
+
+export function buildParam (obj: stringObj) {
     const str = []
     for (const k in obj) {
         if (obj.hasOwnProperty(k)) {
-            const v = obj[k] as string;
+            const v = obj[k];
             str.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
         }
     }

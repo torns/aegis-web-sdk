@@ -4,7 +4,7 @@ import { isOBJByType } from '../utils/index';
 // 抽样丢弃
 export default function(ignore: RegExp[] | Function | RegExp | Function[]) {
 
-    const _ignore: (RegExp[] | Function[]) = isOBJByType(ignore, 'Array') ? (ignore as (RegExp[] | Function[])) : [ignore as RegExp | Function];
+    const _ignore = isOBJByType(ignore, 'Array') ? (ignore as (RegExp[] | Function[])) : [ignore as RegExp | Function];
 
     return function(msg: ErrorMsg, success: Function, fail: Function) {
         let isIgnore = false;

@@ -2,12 +2,13 @@
   "name": "aegis-report-speed",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "parcel test/example/index.html -p 3001",
     "build": "node ./build/build.prd.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "tsc src/index.ts "
   },
   "repository": {
     "type": "git",

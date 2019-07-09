@@ -99,8 +99,8 @@ export default class OfflineDB {
         const urlList: any[] | any[] = [];
         let num = 0;
         let num1 = 0;
-        request.onsuccess = function (event) {
-            const cursor: IDBCursor = event.target.result;
+        request.onsuccess = function (event: any) {
+            const cursor: IDBCursorWithValue  = event.target.result;
             if (cursor && cursor.value) {
                 if (cursor.value.time >= opt.start && cursor.value.time <= opt.end &&
                     equal(cursor.value.id, opt.id) && equal(cursor.value.uin, opt.uin)) {
