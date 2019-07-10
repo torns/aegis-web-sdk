@@ -3,8 +3,17 @@ import overrideImage from '../override/image';
 
 let observeDom: MutationObserver;
 
+// TODO js 加载资源耗时
+export function canUseResource (): boolean {
+    if (performance === undefined) {
+        return false;
+    }
+
+    return true;
+}
+
+// 如果支持 resourceTime api， 第一版只上报一次。
 export default function (emit: Function) {
-    // 改写Image构造函数
     overrideImage(emit);
 
     if (observeDom && observeDom instanceof MutationObserver) {
@@ -68,7 +77,15 @@ function domChangeHandler (e: Element, emit: Function) {
             speedLog.responseTime = Date.now();
             speedLog.duration = speedLog.responseTime - speedLog.sendTime;
             emit(speedLog);
-        })
+        });
+
+        e.addEventListener('error', () => {
+            speedLog.responseTime = Date.now();
+            speedLog.ret = -1;
+            speedLog.duration = speedLog.responseTime - speedLog.sendTime;
+            emit(speedLog);
+        });
+
     } else {
         // TODO 这里可能会有点耗性能
         // 标签有background-image

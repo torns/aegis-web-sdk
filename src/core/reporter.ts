@@ -27,6 +27,7 @@ const baseConfig: AegisConfig = {
     offlineLogAuto: false // 是否自动询问服务器需要自动上报
 }
 
+
 export class Reporter {
     // 日志的缓存池
     private eventLog: EventLog[] = [] // 等待上报的日志
@@ -40,6 +41,10 @@ export class Reporter {
     private _offlineLog!: OfflineLog
     private _reportUrl!: string
     private _reportTask!: number
+    private _reportSpeedTask!: number
+    private _speedReportUrl!: string
+    private startImageReportTask !: Function
+    private startReportTask !: Function
 
     constructor(config?: AegisConfig) {
         if(instance) {
@@ -62,6 +67,10 @@ export class Reporter {
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.handlerRecevieXhr)
         this._collector.on('onRecevieImage', this.handlerRecevieImage);
+
+
+        this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
+        this.startImageReportTask = this.createReportTask(this.imageLog, this.submitSpeedLog);
     }
 
     setConfig = (config: AegisConfig) => {
@@ -88,8 +97,9 @@ export class Reporter {
             '?id=' + id +
             '&uin=' + this._config.uin +
             '&version=' + this._config.version +
-            '&from=' + encodeURIComponent(location.href) +
-            '&'
+            '&from=' + encodeURIComponent(location.href);
+        
+        this._speedReportUrl = '//aegis.qq.com/aegis/speed';
 
         this._config = config;
 
@@ -108,29 +118,50 @@ export class Reporter {
         console.log(data);
     }
 
-    handlerRecevieImage = (data: any) => {
-        console.log(data);
+    handlerRecevieImage = (data: SpeedLog) => {
+        this.reportSpeedLog(data);
     }
     
-    submitLog = (msg: any[] | any) => {
-        const _url = this._reportUrl + formatParams(msg) + '&_t=' + (+new Date());
+    submitLog = (msg: any[]) => {
+        const _url = this._reportUrl + '&' + formatParams(msg) + '&_t=' + (+new Date());
 
         send(_url);
     }
 
-    startReportTask = (msg: NormalLog) => {
-        this.normalLog.push(msg);
-
-        if(this._reportTask) {
-            return;
+    submitImageLog = (msg: any[]) => {
+        const opts = {
+            id: this._config.id,
+            uin: this._config.uin,
+            version: this._config.version,
+            from: encodeURIComponent(location.href),
+            duration: {
+                img: msg
+            }
         }
 
-        this._reportTask = setTimeout(() => {
-            this.submitLog(this.normalLog);
-            this._reportTask = 0; // clear task
-            this.normalLog = []; // clear pool 
-        }, this._config.delay);
+        const _url = this._speedReportUrl + '?payload=' + encodeURIComponent(JSON.stringify(opts));
+
+        send(_url);
     }
+
+    createReportTask = <T>(msgStore: Array<T>, reportFunction: Function) => {
+        let msgList = msgStore;
+        let timer = 0;
+        return (msg: T) => {
+            msgList.push(msg);
+
+            if(timer) {
+                return;
+            }
+    
+            timer = setTimeout(() => {
+                reportFunction(msgList);
+                timer = 0; // clear task
+                msgList = []; // clear pool 
+            }, this._config.delay);
+        }
+    }
+
     // TODO
     report = (msg: any, immediately = false) => {
         const {
@@ -149,7 +180,7 @@ export class Reporter {
         }
         
         if (immediately) {
-            this.submitLog(msg); // 立即上报
+            this.submitLog([msg]); // 立即上报
         } else {
             this.startReportTask(msg);
         }
@@ -157,6 +188,26 @@ export class Reporter {
         if(onReport) {
             onReport(id, msg);
         }
+    }
+
+    reportSpeedLog = (msg: SpeedLog, immediately = false) => {
+        this._processor.processSpeedLog(msg, (_msg:SpeedLog) => {
+            const {
+                id,
+                onReport,
+                offlineLog
+            } = this._config;
+            
+            if (immediately) {
+                this.submitImageLog([msg]); // 立即上报
+            } else {
+                this.startImageReportTask(msg);
+            }
+    
+            if(onReport) {
+                onReport(id, msg);
+            }
+        });
     }
 
     debug (msg: any, immediately = false) {
@@ -187,9 +238,8 @@ export class Reporter {
         });
     }
 
-    // 测速
-    speed (event: string, time: number) {
-
+    // 提供一个自定义测速方法
+    speed (event: string, duration: number, immediately: boolean) {
     }
 
     // 用于统计上报

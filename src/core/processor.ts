@@ -6,11 +6,13 @@ import repeatLimit from '../interceptors/repeat-limit';
 import lengthLimit from '../interceptors/length-limit';
 import sampling from '../interceptors/sampling';
 import { isOBJ, extend } from '../utils/index';
+import imageIgnore from '../interceptors/image-ignore';
 
 let instance: Processor;
 
 export default class Processor{
     logInterceptor!: InterceptorManager
+    speedInterceptor!: InterceptorManager
     constructor(config: AegisConfig) {
         if(instance) {
             return instance;
@@ -25,12 +27,15 @@ export default class Processor{
         this.logInterceptor.use(lengthLimit(config.maxLength));
         this.logInterceptor.use(repeatLimit(config.repeat));
         this.logInterceptor.use(ignore(config.ignore));
+
+        this.speedInterceptor = new InterceptorManager();
+        this.speedInterceptor.use(imageIgnore());
     }
 
 
     // 测速日志
-    processSpeedLog(logs: SpeedLog) {
-
+    processSpeedLog(logs: SpeedLog, success: Function, fail ?: Function) {
+        this.speedInterceptor.run(logs, success, fail);
     }
 
     // 资源日志

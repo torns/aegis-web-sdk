@@ -2,7 +2,7 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interfa
 import { isOBJByType, formatStackMsg } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 import cgiSpeed from '../helper/cgiSpeed';
-import imageSpeed from '../helper/imageSpeed';
+import imageSpeed, { canUseResource } from '../helper/imageSpeed';
 // 上报收集器
 
 let instance: Collector;
@@ -22,11 +22,15 @@ export default class Collector extends EventEmiter {
     }
 
     private bindXhrEvent() {
-        cgiSpeed(this.onXhrResponse.bind(this));
+        cgiSpeed(this.onXhrResponse);
     }
 
     private bindImgEvent() {
-        imageSpeed(this.onImageResponse.bind(this));
+        // if(canUseResource()) {
+        //     this.startImageCollectTask();
+        // } else {
+            imageSpeed(this.onImageResponse);
+        // }
     }
 
     private bindErrorEvent() {
@@ -39,16 +43,35 @@ export default class Collector extends EventEmiter {
         }
     }
 
+    startImageCollectTask = () => {
+        // 这个方法还有待优化
+        const task = function () {
+            setTimeout(() => {
+                const resources = performance.getEntriesByType("resource");
+
+                const imgResource = [];
+                const scriptResource = [];
+                const cssResource = [];
+
+                if(resources.length <= 0) {
+                    task();
+                } else {
+
+                }
+            }, 5000); // 第一版本 5s 收集一次， 如果有数据了，就停止，后面再调整这个策略， 包括后面的 JS 测速上报。
+        };
+    }
+
     // 请求返回时
-    onXhrResponse(data: SpeedLog) {
+    onXhrResponse = (data: SpeedLog) => {
         this.emit('onRecevieXhr', data);
     }
 
-    onImageResponse(data: SpeedLog) {
+    onImageResponse = (data: SpeedLog) => {
         this.emit('onRecevieImage', data);
     }
 
-    onEventResponse(data: EventLog) {
+    onEventResponse = (data: EventLog) => {
         this.emit('onRecevieEvent', data);
     }
 
