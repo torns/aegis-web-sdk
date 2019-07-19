@@ -2,10 +2,9 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig, ErrorMsg } from '
 import Collector from './collector';
 import Processor from './processor';
 import OfflineLog from '../helper/offlinelog';
+import monitor from '../helper/monitor';
 import { send, formatParams, sendOffline } from '../helper/send';
-import { extend, buildParam } from '../utils/index';
-
-let instance: Reporter;
+import { extend } from '../utils/index';
 
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
@@ -27,7 +26,6 @@ const baseConfig: AegisConfig = {
     offlineLogAuto: false // 是否自动询问服务器需要自动上报
 }
 
-
 export class Reporter {
     // 日志的缓存池
     private eventLog: EventLog[] = [] // 等待上报的日志
@@ -47,12 +45,6 @@ export class Reporter {
     private startReportTask !: Function
 
     constructor(config?: AegisConfig) {
-        if(instance) {
-            return instance;
-        } else {
-            instance = this;
-        }
-
         const _config = this.setConfig(config);
 
         this._collector = new Collector(this._config);
@@ -70,7 +62,7 @@ export class Reporter {
 
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
-        this.startImageReportTask = this.createReportTask(this.imageLog, this.submitSpeedLog);
+        this.startImageReportTask = this.createReportTask(this.imageLog, this.submitImageLog);
     }
 
     setConfig = (config: AegisConfig) => {
@@ -83,11 +75,11 @@ export class Reporter {
             return;
         }
 
-        if (/qq\.com$/gi.test(location.hostname)) {
-            if (!config.uin) {
-                config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-            }
-        }
+        // if (/qq\.com$/gi.test(location.hostname)) {
+        //     if (!config.uin) {
+        //         config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
+        //     }
+        // }
         
         if (!config.url) {
             config.url = '//aegis.qq.com/badjs'
@@ -99,7 +91,7 @@ export class Reporter {
             '&version=' + this._config.version +
             '&from=' + encodeURIComponent(location.href);
         
-        this._speedReportUrl = '//aegis.qq.com/aegis/speed';
+        this._speedReportUrl = '//aegis.qq.com/speed';
 
         this._config = config;
 
@@ -115,19 +107,21 @@ export class Reporter {
     }
 
     handlerRecevieXhr = (data: any) => {
-        console.log(data);
+        // console.log(data);
     }
 
     handlerRecevieImage = (data: SpeedLog) => {
         this.reportSpeedLog(data);
     }
     
+    /* 上报普通日志 */
     submitLog = (msg: any[]) => {
         const _url = this._reportUrl + '&' + formatParams(msg) + '&_t=' + (+new Date());
 
         send(_url);
     }
 
+    /* 上报测速 */
     submitImageLog = (msg: any[]) => {
         const opts = {
             id: this._config.id,
@@ -243,28 +237,9 @@ export class Reporter {
     }
 
     // 用于统计上报
-    static monitor (n: any, monitorUrl = '//report.url.cn/report/report_vm') {
-        // 如果n未定义或者为空，则不处理
-        if (typeof n === 'undefined' || n === '') {
-            return;
-        }
+    static monitor = monitor
 
-        // 如果n不是数组，则将其变成数组。注意这里判断方式不一定完美，却非常简单
-        if (typeof n.join === 'undefined') {
-            n = [n];
-        }
-
-        const p = {
-            monitors: '[' + n.join(',') + ']',
-            _: Math.random()
-        }
-
-        if (monitorUrl) {
-            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p);
-
-            new Image().src = _url;
-        }
-    }
+    monitor = monitor
 
     // 初始化离线数据库
     _initOffline = () => {

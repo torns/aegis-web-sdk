@@ -65,7 +65,7 @@ export function sendOffline (url: string, data: string) {
 
         form.appendChild(input);
         form.submit();
-        console.log('report offline log success');
+        // console.log('report offline log success');
         setTimeout(function () {
             document.body.removeChild(iframe);
         }, 5000);

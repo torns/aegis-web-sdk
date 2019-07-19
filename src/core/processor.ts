@@ -8,18 +8,12 @@ import sampling from '../interceptors/sampling';
 import { isOBJ, extend } from '../utils/index';
 import imageIgnore from '../interceptors/image-ignore';
 
-let instance: Processor;
+
 
 export default class Processor{
     logInterceptor!: InterceptorManager
     speedInterceptor!: InterceptorManager
     constructor(config: AegisConfig) {
-        if(instance) {
-            return instance;
-        } else {
-            instance = this;
-        }
-
         this.logInterceptor = new InterceptorManager();
 
         this.logInterceptor.use(formatLog());
@@ -48,7 +42,8 @@ export default class Processor{
         const msg = isOBJ(_msg) ? extend({}, _msg, {
             level: logType
         }) : {
-            msg: _msg
+            msg: _msg,
+            level: logType
         };
 
         this.logInterceptor.run(msg, success, fail);
