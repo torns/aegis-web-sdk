@@ -50,15 +50,15 @@ let config = {
         ]
     },
     plugins: [
-        // new Uglifyjs({
-        //     uglifyOptions: {
-        //         compress: {
-        //             pure_funcs: ['console.log']
-        //         },
-        //         warnings: false
-        //     }
+        new Uglifyjs({
+            uglifyOptions: {
+                compress: {
+                    pure_funcs: ['console.log']
+                },
+                warnings: false
+            }
 
-        // }),
+        }),
         new CleanWebpackPlugin(['dist'])]
 
 }
