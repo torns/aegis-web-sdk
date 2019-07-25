@@ -25,13 +25,14 @@ export default function (emit: Function) {
         mutations.forEach(mutation => {
             switch(mutation.type) {
                 // dom操作
-                case 'childList': 
-                    mutation.addedNodes.length && mutation.addedNodes.forEach(e => {
-                        if(e instanceof Element) {
-                            // 元素节点
-                            domChangeHandler(e, emit);
+                case 'childList':
+                    const addedNodes = mutation.addedNodes;
+                    const addedNodesLength = addedNodes.length || 0;
+                    for (let i = 0; i < addedNodesLength; i++) {
+                        if (addedNodes[i] instanceof Element) {
+                            domChangeHandler(addedNodes[i], emit);
                         }
-                    })
+                    }
                     break;
 
                 // 属性变化
