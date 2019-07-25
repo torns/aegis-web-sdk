@@ -1,5 +1,6 @@
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
+import { formatUrl } from '../utils';
 
 let observeDom: MutationObserver;
 
@@ -66,7 +67,7 @@ function domChangeHandler (e: Element, emit: Function) {
     if(e instanceof HTMLImageElement && e.src && e.src !== location.href) {
         // img且有src属性
         const speedLog: SpeedLog = {
-            url: e.src,
+            url: formatUrl(e.src),
             method: 'get',
             openTime: Date.now(),
             sendTime: Date.now(),

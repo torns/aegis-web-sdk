@@ -69,3 +69,12 @@ export function buildParam (obj: stringObj) {
     }
     return str.join('&')
 }
+
+// 去掉query
+export function formatUrl (url: string) {
+    if (url.indexOf('?') !== -1) {
+        return url.substr(0, url.indexOf('?'));
+    } else {
+        return url
+    }
+}
