@@ -2,7 +2,7 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interfa
 import { isOBJByType, formatStackMsg } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 import cgiSpeed from '../helper/cgiSpeed';
-import imageSpeed, { canUseResource } from '../helper/imageSpeed';
+import imageSpeed from '../helper/imageSpeed';
 // 上报收集器
 
 let instance: Collector;
@@ -26,11 +26,7 @@ export default class Collector extends EventEmiter {
     }
 
     private bindImgEvent() {
-        // if(canUseResource()) {
-        //     this.startImageCollectTask();
-        // } else {
-            imageSpeed(this.onImageResponse);
-        // }
+        imageSpeed(this.onImageResponse);
     }
 
     private bindErrorEvent() {

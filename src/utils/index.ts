@@ -78,3 +78,14 @@ export function formatUrl (url: string) {
         return url
     }
 }
+
+export function isNative (Ctor: any) {
+    return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
+}
+
+export function canUseResourceTiming (): boolean {
+    if (typeof performance !== 'undefined' && isNative(Performance)) {
+        return true;
+    }
+    return false;
+}
