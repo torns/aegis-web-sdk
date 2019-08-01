@@ -13,13 +13,13 @@ function collect(): void{
     performance.clearResourceTimings();
     for(let i = 0, l= entries.length; i < l; i++) {
         const entry = entries[i];
-        if (IMG_INITIATOR_TYPE.indexOf(entry.initiatorType) > 0) {
+        if (IMG_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
             imgLogEmitors.forEach(emit => {
                 emit(generateLog(entry));
             });
         }
-        if (CGI_INITIATOR_TYPE.indexOf(entry.initiatorType) > 0) {
-            imgLogEmitors.forEach(emit => {
+        if (CGI_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
+            cgiLogEmitors.forEach(emit => {
                 emit(generateLog(entry));
             });
         }
