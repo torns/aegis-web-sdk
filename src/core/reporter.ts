@@ -43,6 +43,7 @@ export class Reporter {
     private _reportSpeedTask!: number
     private _speedReportUrl!: string
     private startImageReportTask !: Function
+    private startSpeedReportTask !: Function
     private startReportTask !: Function
 
     constructor(config?: AegisConfig) {
@@ -64,6 +65,7 @@ export class Reporter {
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
         this.startImageReportTask = this.createReportTask(this.imageLog, this.submitImageLog);
+        this.startSpeedReportTask = this.createReportTask(this.speedLog, this.submitSpeedLog);
     }
 
     setConfig = (config: AegisConfig) => {
@@ -101,11 +103,11 @@ export class Reporter {
     }
 
     handlerRecevieXhr = (data: any) => {
-        // console.log(data);
+        this.reportSpeedLog(data);
     }
 
     handlerRecevieImage = (data: SpeedLog) => {
-        this.reportSpeedLog(data);
+        this.reportImageLog(data);
     }
     
     /* 上报普通日志 */
@@ -124,6 +126,22 @@ export class Reporter {
             from: encodeURIComponent(location.href),
             duration: {
                 img: msg
+            }
+        }
+
+        const _url = this._speedReportUrl + '?payload=' + encodeURIComponent(JSON.stringify(opts));
+
+        send(_url);
+    }
+
+    submitSpeedLog = (msg: any[]) => {
+        const opts = {
+            id: this._config.id,
+            uin: this._config.uin,
+            version: this._config.version,
+            from: encodeURIComponent(location.href),
+            duration: {
+                fetch: msg
             }
         }
 
@@ -178,7 +196,7 @@ export class Reporter {
         }
     }
 
-    reportSpeedLog = (msg: SpeedLog, immediately = false) => {
+    reportImageLog = (msg: SpeedLog, immediately = false) => {
         this._processor.processSpeedLog(msg, (_msg:SpeedLog) => {
             const {
                 id,
@@ -190,6 +208,25 @@ export class Reporter {
                 this.submitImageLog([msg]); // 立即上报
             } else {
                 this.startImageReportTask(msg);
+            }
+    
+            if(onReport) {
+                onReport(id, msg);
+            }
+        });
+    }
+
+    reportSpeedLog = (msg: SpeedLog, immediately = false) => {
+        this._processor.processSpeedLog(msg, (_msg:SpeedLog) => {
+            const {
+                id,
+                onReport
+            } = this._config;
+            
+            if (immediately) {
+                this.submitSpeedLog([msg]); // 立即上报
+            } else {
+                this.startSpeedReportTask(msg);
             }
     
             if(onReport) {
