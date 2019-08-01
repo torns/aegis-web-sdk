@@ -28,7 +28,7 @@ export default function (emit: Function) {
                     const addedNodesLength = addedNodes.length || 0;
                     for (let i = 0; i < addedNodesLength; i++) {
                         if (addedNodes[i] instanceof Element) {
-                            domChangeHandler(addedNodes[i], emit);
+                            domChangeHandler(addedNodes[i] as Element, emit);
                         }
                     }
                     break;
