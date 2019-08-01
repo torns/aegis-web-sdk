@@ -43,6 +43,7 @@ export interface AegisConfig {
     uin: number | string
     version: number
     url: string
+    speedUrl: string
     speedApi ?: string
     ext: object | null
     level: number

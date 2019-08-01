@@ -12,6 +12,7 @@ const baseConfig: AegisConfig = {
     isDebug: false,
     isWhiteList: false,
     url: '//aegis.qq.com/badjs', // 上报接口
+    speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
@@ -45,7 +46,7 @@ export class Reporter {
     private startReportTask !: Function
 
     constructor(config?: AegisConfig) {
-        const _config = this.setConfig(config);
+        this.setConfig(config);
 
         this._collector = new Collector(this._config);
         this._processor = new Processor(this._config);
@@ -68,32 +69,25 @@ export class Reporter {
     setConfig = (config: AegisConfig) => {
         this._config = extend(baseConfig, this._config, config) as AegisConfig;
 
-        const id = parseInt(config.id as string, 10);
+        const id = parseInt(this._config.id as string, 10);
 
         if (!id) {
-            console.log('aegis 初始化失败 未传入项目id');
+            console.error('aegis 初始化失败 未传入项目id');
             return;
         }
 
-        // if (/qq\.com$/gi.test(location.hostname)) {
-        //     if (!config.uin) {
-        //         config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-        //     }
-        // }
-        
-        if (!config.url) {
-            config.url = '//aegis.qq.com/badjs'
+        if (!this._config.url) {
+            console.warn('日志上报地址url不能设置为空');
+            this._config.url = '//aegis.qq.com/badjs';
         }
 
-        this._reportUrl = (config.url || '//aegis.qq.com/badjs') +
-            '?id=' + id +
-            '&uin=' + this._config.uin +
-            '&version=' + this._config.version +
-            '&from=' + encodeURIComponent(location.href);
-        
-        this._speedReportUrl = '//aegis.qq.com/speed';
+        if (!this._config.speedUrl) {
+            console.warn('测速上报地址speedUrl不能设置为空');
+            this._config.speedUrl = '//aegis.qq.com/speed';
+        }
 
-        this._config = config;
+        this._reportUrl = `${config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
+        this._speedReportUrl = this._config.speedUrl;
 
         return this._config;
     }
