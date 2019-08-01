@@ -1,16 +1,16 @@
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
-import { formatUrl, canUseResourceTiming } from '../utils';
-import resourceTiming from './resourceTiming';
+import { formatUrl } from '../utils';
+// import resourceTiming from './resourceTiming';
 
 let observeDom: MutationObserver;
 
 // 如果支持 resourceTime api， 第一版只上报一次。
 export default function (emit: Function) {
-    if (canUseResourceTiming()) {
-        resourceTiming.getImageLog(emit);
-        return;
-    }
+    // if (canUseResourceTiming()) {
+    //     resourceTiming.getImageLog(emit);
+    //     return;
+    // }
 
     overrideImage(emit);
 
@@ -67,25 +67,24 @@ function domChangeHandler (e: Element, emit: Function) {
         const speedLog: SpeedLog = {
             url: formatUrl(e.src),
             method: 'get',
-            openTime: Date.now(),
-            sendTime: Date.now(),
             ret: 0,
             status: 200
         }
+        const sendTime = Date.now();
         e.addEventListener('load', () => {
-            speedLog.responseTime = Date.now();
-            speedLog.duration = speedLog.responseTime - speedLog.sendTime;
+            speedLog.duration = Date.now() - sendTime;
             emit(speedLog);
         });
 
         e.addEventListener('error', () => {
-            speedLog.responseTime = Date.now();
             speedLog.ret = -1;
-            speedLog.duration = speedLog.responseTime - speedLog.sendTime;
+            speedLog.status = 400;
+            speedLog.duration = Date.now() - sendTime;
             emit(speedLog);
         });
 
     } else if (e instanceof HTMLScriptElement && e.src && e.src !== location.href) {
+        // script且有src属性
         debugger;
     } else {
         // TODO 这里可能会有点耗性能

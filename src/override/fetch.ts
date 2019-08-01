@@ -13,16 +13,14 @@ export default function overrideFetch(notify: Function) {
         
         const speedLog: SpeedLog = {
             url: args[0],
-            method: args[1] ? args[1].method || 'get' : 'get',
-            openTime: Date.now(),
-            sendTime: Date.now()
+            method: args[1] ? args[1].method || 'get' : 'get'
         };
+        const sendTime = Date.now();
 
         const fetchPromise = originFetch(...args);
 
         fetchPromise.then(function(res: any){
-            speedLog.responseTime = Date.now();
-            speedLog.duration = speedLog.responseTime - speedLog.sendTime;
+            speedLog.duration = Date.now() - sendTime;
 
             notify && notify(speedLog);
             return res;

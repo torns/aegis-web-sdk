@@ -16,11 +16,10 @@ export default class Collector extends EventEmiter {
             instance = this;
         }
         
-        const speedType = config.speedType;
-        if (speedType.indexOf('image') > -1) {
-            this.bindImgEvent();
+        if (config.reportAssetSpeed) {
+            this.bindAssetEvent();
         }
-        if (speedType.indexOf('cgi') > -1) {
+        if (config.reportApiSpeed) {
             this.bindXhrEvent();
         }
         this.bindErrorEvent();
@@ -30,8 +29,8 @@ export default class Collector extends EventEmiter {
         cgiSpeed(this.onXhrResponse);
     }
 
-    private bindImgEvent() {
-        assetSpeed(this.onImageResponse);
+    private bindAssetEvent() {
+        assetSpeed(this.onAssetResponse);
     }
 
     private bindErrorEvent() {
@@ -68,8 +67,12 @@ export default class Collector extends EventEmiter {
         this.emit('onRecevieXhr', data);
     }
 
-    onImageResponse = (data: SpeedLog) => {
+    onAssetResponse = (data: SpeedLog) => {
         this.emit('onRecevieImage', data);
+    }
+
+    onScriptResponse = (data: SpeedLog) => {
+        this.emit('onRecevieScript', data);
     }
 
     onEventResponse = (data: EventLog) => {

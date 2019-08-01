@@ -1,9 +1,6 @@
 export interface SpeedLog {
     url?: string, // 请求地址,
     method?: string, //请求方法
-    openTime?: number,   // 请求开始时的时间戳,
-    sendTime?: number,   // 请求发送时的时间戳
-    responseTime?: number // 请求返回时的时间戳
     duration?: number, // 耗时
     ret?: number, // cgi 的状态码，如果是图片或其他的，默认为 0 
     status?: number, // http 返回码
@@ -42,10 +39,10 @@ export interface AegisConfig {
     id: number | string
     uin: number | string
     version: number
-    speedType ?: string // 开启的测速类型,‘cgi image script’中的一个或多个
+    reportAssetSpeed ?: boolean // 是否开启静态资源测速
+    reportApiSpeed ?: boolean // 是否开启接口测速
     url: string
     speedUrl: string
-    speedApi ?: string
     ext: object | null
     level: number
     ignore: any[]

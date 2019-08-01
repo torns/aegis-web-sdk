@@ -13,15 +13,13 @@ export default function overrideImage (notify: Function) {
         const img = new realImage(width, height);
         const speedLog: SpeedLog = {
             method: 'get',
-            openTime: Date.now(),
-            sendTime: Date.now(),
             ret: 0,
             status: 200
         }
+        const sendTime = Date.now();
         img.addEventListener('load', () => {
             speedLog.url = formatUrl(img.src);
-            speedLog.responseTime = Date.now();
-            speedLog.duration = speedLog.responseTime - speedLog.sendTime;
+            speedLog.duration = Date.now() - sendTime;
             notify && notify(speedLog);
         })
 

@@ -17,14 +17,13 @@ export default function overrideXhr(notify: Function) {
         
         xhr.speedLog = {
             url,
-            method,
-            openTime: Date.now()
+            method
         } as SpeedLog;
-        
+
+        const sendTime = Date.now();
         xhr.addEventListener('readystatechange', function() {
             if(xhr.readyState === 4) {
-                xhr.speedLog.responseTime = Date.now();
-                xhr.speedLog.duration = xhr.speedLog.responseTime - xhr.speedLog.sendTime;
+                xhr.speedLog.duration = Date.now() - sendTime;
 
                 notify && notify(xhr.speedLog);
             }

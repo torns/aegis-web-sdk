@@ -4,14 +4,15 @@ import Processor from './processor';
 import OfflineLog from '../helper/offlinelog';
 import monitor from '../helper/monitor';
 import { send, formatParams, sendOffline } from '../helper/send';
-import { extend } from '../utils/index';
+import { extend, getAid } from '../utils/index';
 
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
-    uin: 0, // user id
+    uin: getAid(), // user id
     isDebug: false,
     isWhiteList: false,
-    speedType: '', // 开启的测速类型,‘cgi image script’中的一个或多个
+    reportApiSpeed: false,
+    reportAssetSpeed: false,
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
     version: 0,

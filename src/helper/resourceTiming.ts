@@ -38,9 +38,6 @@ function generateLog(entry: PerformanceResourceTiming): SpeedLog{
     return {
         url: entry.name, // 请求地址,
         method: 'get', //请求方法
-        openTime: timeOrigin + entry.connectStart,   // 请求开始时的时间戳,
-        sendTime: timeOrigin + entry.requestStart,   // 请求发送时的时间戳
-        responseTime: timeOrigin + entry.responseStart, // 请求返回时的时间戳
         duration: entry.duration, // 耗时
         ret: 0, // cgi 的状态码，如果是图片或其他的，默认为 0 
         status: 200, // http 返回码
