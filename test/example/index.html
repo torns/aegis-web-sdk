@@ -21,6 +21,7 @@
     <button onclick="newImage()">新建Image实例</button>
     <button onclick="changeSrc()">修改src属性</button>
     <button onclick="changeClass()">修改class属性</button>
+    <button onclick="insertScript()">插入脚本</button>
     <div id="imageBox" class="b c">
         <img id="img" src=""/>
         <!-- <img style="background-image:url('https://avatars1.githubusercontent.com/u/21698272?s=40&v=4')" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"> -->
@@ -29,7 +30,8 @@
     <script>
         a = new Aegis({
             uin: '410964963',
-            id: 111
+            id: 111,
+            speedType: 'cgi image'
         });
 
         // 压测
@@ -37,6 +39,7 @@
         //     insertBackgroundImage();
         // }, 10)
 
+        // cgi
         function sendXhr() {
             const xhr = new XMLHttpRequest();
             xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
@@ -45,6 +48,8 @@
         function sendFetch() {
             fetch(`https://api.tone.qq.com/cgi-bin/interface/doRequest?t=${Math.floor(Math.random() * 100)}`)
         }
+
+        // 图片
         function insertImage() {
             let img = document.createElement('img');
             document.getElementById("imageBox").append(img);
@@ -63,6 +68,13 @@
         }
         function changeClass() {
             document.getElementById("imageBox").setAttribute('class', 'a');
+        }
+
+        // 脚本
+        function insertScript() {
+            let script = document.createElement('script');
+            script.src = 'https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js';
+            document.body.append(script);
         }
     </script>
 </body>

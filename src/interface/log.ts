@@ -42,6 +42,7 @@ export interface AegisConfig {
     id: number | string
     uin: number | string
     version: number
+    speedType ?: string // 开启的测速类型,‘cgi image script’中的一个或多个
     url: string
     speedUrl: string
     speedApi ?: string

@@ -85,6 +85,8 @@ function domChangeHandler (e: Element, emit: Function) {
             emit(speedLog);
         });
 
+    } else if (e instanceof HTMLScriptElement && e.src && e.src !== location.href) {
+        debugger;
     } else {
         // TODO 这里可能会有点耗性能
         // 标签有background-image

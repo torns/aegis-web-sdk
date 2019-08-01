@@ -11,6 +11,7 @@ const baseConfig: AegisConfig = {
     uin: 0, // user id
     isDebug: false,
     isWhiteList: false,
+    speedType: '', // 开启的测速类型,‘cgi image script’中的一个或多个
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
     version: 0,

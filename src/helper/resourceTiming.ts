@@ -2,8 +2,10 @@ import { SpeedLog } from '../interface/log';
 
 const IMG_INITIATOR_TYPE = ['img', 'css'],
       CGI_INITIATOR_TYPE = ['fetch', 'xmlhttprequest'],
+      SCRIPT_INITIATOR_TYPE = ['script'],
       imgLogEmitors: Function[] = [],
-      cgiLogEmitors: Function[] = [];
+      cgiLogEmitors: Function[] = [],
+      scriptLogEmitors: Function[] = [];
 
 let colletcing: boolean = false,
     timer: number;
@@ -22,6 +24,11 @@ function collect(): void{
             cgiLogEmitors.forEach(emit => {
                 emit(generateLog(entry));
             });
+        }
+        if (SCRIPT_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
+            scriptLogEmitors.forEach(emit => {
+                emit(generateLog(entry));
+            })
         }
     }
 }
@@ -62,6 +69,10 @@ export default {
     getCgiLog(emit: Function): void {
         startCollect();
         cgiLogEmitors.push(emit);
+    },
+    getScriptLog(emit: Function): void {
+        startCollect();
+        scriptLogEmitors.push(emit);
     },
     stopCollect
 }

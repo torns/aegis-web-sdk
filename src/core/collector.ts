@@ -2,7 +2,7 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interfa
 import { isOBJByType, formatStackMsg } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 import cgiSpeed from '../helper/cgiSpeed';
-import imageSpeed from '../helper/imageSpeed';
+import assetSpeed from '../helper/assetSpeed';
 // 上报收集器
 
 let instance: Collector;
@@ -16,8 +16,13 @@ export default class Collector extends EventEmiter {
             instance = this;
         }
         
-        this.bindXhrEvent();
-        this.bindImgEvent();
+        const speedType = config.speedType;
+        if (speedType.indexOf('image') > -1) {
+            this.bindImgEvent();
+        }
+        if (speedType.indexOf('cgi') > -1) {
+            this.bindXhrEvent();
+        }
         this.bindErrorEvent();
     }
 
@@ -26,7 +31,7 @@ export default class Collector extends EventEmiter {
     }
 
     private bindImgEvent() {
-        imageSpeed(this.onImageResponse);
+        assetSpeed(this.onImageResponse);
     }
 
     private bindErrorEvent() {
