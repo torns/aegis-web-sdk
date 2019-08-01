@@ -69,3 +69,23 @@ export function buildParam (obj: stringObj) {
     }
     return str.join('&')
 }
+
+// 去掉query
+export function formatUrl (url: string) {
+    if (url.indexOf('?') !== -1) {
+        return url.substr(0, url.indexOf('?'));
+    } else {
+        return url
+    }
+}
+
+export function isNative (Ctor: any) {
+    return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
+}
+
+export function canUseResourceTiming (): boolean {
+    if (typeof performance !== 'undefined' && isNative(Performance)) {
+        return true;
+    }
+    return false;
+}

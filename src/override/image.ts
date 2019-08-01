@@ -1,4 +1,5 @@
 import { SpeedLog } from '../interface/log';
+import { formatUrl } from '../utils';
 
 let alreadyOverride: boolean = false;
 
@@ -18,7 +19,7 @@ export default function overrideImage (notify: Function) {
             status: 200
         }
         img.addEventListener('load', () => {
-            speedLog.url = img.src;
+            speedLog.url = formatUrl(img.src);
             speedLog.responseTime = Date.now();
             speedLog.duration = speedLog.responseTime - speedLog.sendTime;
             notify && notify(speedLog);

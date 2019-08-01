@@ -1,19 +1,17 @@
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
+import { formatUrl, canUseResourceTiming } from '../utils';
+import resourceTiming from './resourceTiming';
 
 let observeDom: MutationObserver;
 
-// TODO js 加载资源耗时
-export function canUseResource (): boolean {
-    if (performance === undefined) {
-        return false;
-    }
-
-    return true;
-}
-
 // 如果支持 resourceTime api， 第一版只上报一次。
 export default function (emit: Function) {
+    if (canUseResourceTiming()) {
+        resourceTiming.getImageLog(emit);
+        return;
+    }
+
     overrideImage(emit);
 
     if (observeDom && observeDom instanceof MutationObserver) {
@@ -67,7 +65,7 @@ function domChangeHandler (e: Element, emit: Function) {
     if(e instanceof HTMLImageElement && e.src && e.src !== location.href) {
         // img且有src属性
         const speedLog: SpeedLog = {
-            url: e.src,
+            url: formatUrl(e.src),
             method: 'get',
             openTime: Date.now(),
             sendTime: Date.now(),
