@@ -1,5 +1,5 @@
 import { SpeedLog } from '../interface/log';
-import { formatUrl } from '../utils';
+import { formatUrl, urlIsHttps } from '../utils';
 
 let alreadyOverride: boolean = false;
 
@@ -12,14 +12,18 @@ export default function overrideImage (notify: Function) {
     (<any>window).Image = function (width: any, height: any) {
         const img = new realImage(width, height);
         const speedLog: SpeedLog = {
-            method: 'get',
-            ret: 0,
-            status: 200
+            status: 200,
+            url: formatUrl(img.src),
+            isHttps: urlIsHttps(img.src)
         }
         const sendTime = Date.now();
         img.addEventListener('load', () => {
-            speedLog.url = formatUrl(img.src);
             speedLog.duration = Date.now() - sendTime;
+            notify && notify(speedLog);
+        })
+        img.addEventListener('error', () => {
+            speedLog.duration = Date.now() - sendTime;
+            speedLog.status = 400;
             notify && notify(speedLog);
         })
 

@@ -102,3 +102,7 @@ export function getAid (): string {
     }
     return aid
 }
+
+export function urlIsHttps (url: string) : boolean {
+    return (/^https/).test(url);
+}

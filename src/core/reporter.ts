@@ -62,7 +62,7 @@ export class Reporter {
 
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.handlerRecevieXhr)
-        this._collector.on('onRecevieImage', this.handlerRecevieImage);
+        this._collector.on('onRecevieImage', this.handlerRecevieAsset);
 
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
@@ -108,7 +108,7 @@ export class Reporter {
         this.reportSpeedLog(data);
     }
 
-    handlerRecevieImage = (data: SpeedLog) => {
+    handlerRecevieAsset = (data: SpeedLog) => {
         this.reportImageLog(data);
     }
     
@@ -127,7 +127,7 @@ export class Reporter {
             version: this._config.version,
             from: encodeURIComponent(location.href),
             duration: {
-                img: msg
+                static: msg
             }
         }
 

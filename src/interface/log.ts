@@ -1,8 +1,9 @@
 export interface SpeedLog {
     url?: string, // 请求地址,
-    method?: string, //请求方法
+    // method?: string, //请求方法
     duration?: number, // 耗时
-    ret?: number, // cgi 的状态码，如果是图片或其他的，默认为 0 
+    isHttps?: boolean, // 请求地址是否https
+    // ret?: number, // cgi 的状态码，如果是图片或其他的，默认为 0 
     status?: number, // http 返回码
 }
 
