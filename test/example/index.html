@@ -30,11 +30,15 @@
     <script>
         a = new Aegis({
             id: 111,
-            url: 'http://10.65.94.49:6543',
-            speedUrl: 'http://10.65.94.49:6543/speed',
+            url: 'http://10.65.94.86:6543',
+            speedUrl: 'http://10.65.94.86:6543/speed',
+            performanceUrl: 'http://10.65.94.86:6543/performance',
             reportApiSpeed: true,
             reportAssetSpeed: true
         });
+        // setTimeout(() => {
+        //     location.reload();
+        // }, 3000)
 
         // 压测
         // setInterval(() => {

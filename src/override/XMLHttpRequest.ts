@@ -24,6 +24,8 @@ export default function overrideXhr(notify: Function) {
         const sendTime = Date.now();
         xhr.addEventListener('readystatechange', function() {
             if(xhr.readyState === 4) {
+                // TODO 根据content-type判断请求的是否是cgi
+                // xhr.getResponseHeader('content-type');
                 xhr.speedLog.duration = Date.now() - sendTime;
 
                 notify && notify(xhr.speedLog);

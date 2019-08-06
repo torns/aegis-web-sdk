@@ -21,9 +21,13 @@ export default function overrideFetch(notify: Function) {
         const fetchPromise = originFetch(...args);
 
         fetchPromise.then(function(res: any){
-            speedLog.duration = Date.now() - sendTime;
-
-            notify && notify(speedLog);
+            try {
+                // TODO 根据content-type判断请求的是否是cgi
+                // res.headers.get('content-type');
+                speedLog.duration = Date.now() - sendTime;
+    
+                notify && notify(speedLog);
+            }catch(err){}
             return res;
         })
 
