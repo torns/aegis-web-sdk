@@ -19,14 +19,15 @@ export default class Collector extends EventEmiter {
         if (config.reportAssetSpeed) {
             this.bindAssetEvent();
         }
-        if (config.reportApiSpeed) {
+        // 有些业务会通过xhr或者fetch去请求静态资源
+        if (config.reportApiSpeed || config.reportAssetSpeed) {
             this.bindXhrEvent();
         }
         this.bindErrorEvent();
     }
 
     private bindXhrEvent() {
-        cgiSpeed(this.onXhrResponse);
+        cgiSpeed(this.onXhrResponse, this.onAssetResponse);
     }
 
     private bindAssetEvent() {
@@ -68,11 +69,7 @@ export default class Collector extends EventEmiter {
     }
 
     onAssetResponse = (data: SpeedLog) => {
-        this.emit('onRecevieImage', data);
-    }
-
-    onScriptResponse = (data: SpeedLog) => {
-        this.emit('onRecevieScript', data);
+        this.emit('onRecevieAsset', data);
     }
 
     onEventResponse = (data: EventLog) => {

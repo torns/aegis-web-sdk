@@ -3,7 +3,7 @@ import { formatUrl } from '../utils';
 
 let alreadyOverride: boolean = false;
 
-export default function overrideFetch(notify: Function) {
+export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
     if(alreadyOverride) return;
     alreadyOverride = true;
 
@@ -22,11 +22,17 @@ export default function overrideFetch(notify: Function) {
 
         fetchPromise.then(function(res: any){
             try {
-                // TODO 根据content-type判断请求的是否是cgi
-                // res.headers.get('content-type');
                 speedLog.duration = Date.now() - sendTime;
     
-                notify && notify(speedLog);
+                // 根据content-type判断请求的是否是cgi
+                const contentType = res.headers.get('content-type');
+                if (contentType.indexOf('image') !== -1 || contentType.indexOf('javascript') !== -1 ) {
+                    // 图片或者js
+                    emitAsset && emitAsset(speedLog);
+                } else if (contentType.indexOf('json') !== -1) {
+                    // cgi
+                    emitCgi && emitCgi(speedLog);
+                }
             }catch(err){}
             return res;
         })

@@ -22,6 +22,10 @@
     <button onclick="changeSrc()">修改src属性</button>
     <button onclick="changeClass()">修改class属性</button>
     <button onclick="insertScript()">插入脚本</button>
+    <button onclick="xhrImage()">xhr请求图片</button>
+    <button onclick="xhrScript()">xhr请求脚本</button>
+    <button onclick="fetchImage()">fetch请求图片</button>
+    <button onclick="fetchScript()">fetch请求脚本</button>
     <div id="imageBox" class="b c">
         <img id="img" src=""/>
         <!-- <img style="background-image:url('https://avatars1.githubusercontent.com/u/21698272?s=40&v=4')" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"> -->
@@ -76,12 +80,28 @@
         function changeClass() {
             document.getElementById("imageBox").setAttribute('class', 'a');
         }
+        function xhrImage() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg');
+            xhr.send();
+        }
+        function fetchImage() {
+            fetch(`http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg`)
+        }
 
         // 脚本
         function insertScript() {
             let script = document.createElement('script');
             script.src = 'https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js';
             document.body.append(script);
+        }
+        function xhrScript() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js');
+            xhr.send();
+        }
+        function fetchScript() {
+            fetch(`https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js`)
         }
     </script>
 </body>

@@ -64,7 +64,7 @@ export class Reporter {
 
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.handlerRecevieXhr)
-        this._collector.on('onRecevieImage', this.handlerRecevieAsset);
+        this._collector.on('onRecevieAsset', this.handlerRecevieAsset);
 
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);

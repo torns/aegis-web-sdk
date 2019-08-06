@@ -3,7 +3,7 @@ import { formatUrl } from '../utils';
 
 let alreadyOverride: boolean = false;
 
-export default function overrideXhr(notify: Function) {
+export default function overrideXhr(emitCgi: Function, emitAsset: Function) {
     if(alreadyOverride) return;
     alreadyOverride = true;
 
@@ -24,11 +24,17 @@ export default function overrideXhr(notify: Function) {
         const sendTime = Date.now();
         xhr.addEventListener('readystatechange', function() {
             if(xhr.readyState === 4) {
-                // TODO 根据content-type判断请求的是否是cgi
-                // xhr.getResponseHeader('content-type');
                 xhr.speedLog.duration = Date.now() - sendTime;
-
-                notify && notify(xhr.speedLog);
+                
+                // 根据content-type判断请求的是否是cgi
+                const contentType = xhr.getResponseHeader('content-type').toLowerCase();
+                if (contentType.indexOf('image') !== -1 || contentType.indexOf('javascript') !== -1 ) {
+                    // 图片或者js
+                    emitAsset && emitAsset(xhr.speedLog);
+                } else if (contentType.indexOf('json') !== -1) {
+                    // cgi
+                    emitCgi && emitCgi(xhr.speedLog);
+                }
             }
         })
 

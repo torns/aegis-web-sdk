@@ -1,13 +1,7 @@
 import overrideFetch from '../override/fetch';
 import overrideXhr from '../override/XMLHttpRequest';
-// import { canUseResourceTiming } from '../utils';
-// import resourceTiming from './resourceTiming';
 
-export default function (emit: Function) {
-    // if (canUseResourceTiming()) {
-    //     resourceTiming.getCgiLog(emit);
-    //     return;
-    // }
-    overrideFetch(emit);
-    overrideXhr(emit);
+export default function (emitCgi: Function, emitAsset: Function) {
+    overrideFetch(emitCgi, emitAsset);
+    overrideXhr(emitCgi, emitAsset);
 }
