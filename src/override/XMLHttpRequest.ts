@@ -1,4 +1,5 @@
 import { SpeedLog } from '../interface/log';
+import { formatUrl } from '../utils';
 
 let alreadyOverride: boolean = false;
 
@@ -16,7 +17,7 @@ export default function overrideXhr(notify: Function) {
               args = arguments;
         
         xhr.speedLog = {
-            url,
+            url: formatUrl(url),
             method
         } as SpeedLog;
 

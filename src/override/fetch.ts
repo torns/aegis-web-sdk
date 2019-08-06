@@ -1,4 +1,5 @@
 import { SpeedLog } from '../interface/log';
+import { formatUrl } from '../utils';
 
 let alreadyOverride: boolean = false;
 
@@ -12,7 +13,7 @@ export default function overrideFetch(notify: Function) {
         const args = Array.prototype.slice.call(arguments);
         
         const speedLog: SpeedLog = {
-            url: args[0],
+            url: formatUrl(args[0]),
             method: args[1] ? args[1].method || 'get' : 'get'
         };
         const sendTime = Date.now();

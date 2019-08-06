@@ -1,17 +1,14 @@
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
 import { formatUrl, urlIsHttps } from '../utils';
-// import resourceTiming from './resourceTiming';
 
 let observeDom: MutationObserver;
 
-// 如果支持 resourceTime api， 第一版只上报一次。
+/**
+ * 通过MutationObserver监听dom变化，从而获取img、scrirt、带background-image节点的变化。
+ * @param emit 
+ */
 export default function (emit: Function) {
-    // if (canUseResourceTiming()) {
-    //     resourceTiming.getImageLog(emit);
-    //     return;
-    // }
-
     overrideImage(emit);
 
     if (observeDom && observeDom instanceof MutationObserver) {
@@ -62,7 +59,7 @@ export default function (emit: Function) {
 
 function domChangeHandler (e: Element, emit: Function) {
     // 之所以不能等于当前location.href，是因为在chrome中如果src没赋值，会默认取到location.href
-    if(e instanceof HTMLImageElement && e.src && e.src !== location.href) {
+    if((e instanceof HTMLImageElement || e instanceof HTMLScriptElement) && e.src && e.src !== location.href) {
         // img且有src属性
         const speedLog: SpeedLog = {
             url: formatUrl(e.src),
@@ -81,24 +78,6 @@ function domChangeHandler (e: Element, emit: Function) {
             emit(speedLog);
         });
 
-    } else if (e instanceof HTMLScriptElement && e.src && e.src !== location.href) {
-        // script且有src属性
-        const speedLog: SpeedLog = {
-            url: formatUrl(e.src),
-            status: 200,
-            isHttps: urlIsHttps(e.src)
-        }
-        const sendTime = Date.now();
-        e.addEventListener('load', () => {
-            speedLog.duration = Date.now() - sendTime;
-            emit(speedLog);
-        });
-
-        e.addEventListener('error', () => {
-            speedLog.status = 400;
-            speedLog.duration = Date.now() - sendTime;
-            emit(speedLog);
-        });
     } else {
         // TODO 这里可能会有点耗性能
         // 标签有background-image
