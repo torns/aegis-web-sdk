@@ -72,10 +72,10 @@ export function buildParam (obj: stringObj) {
 
 // 去掉query
 export function formatUrl (url: string) {
-    if (url.indexOf('?') !== -1) {
-        return url.substr(0, url.indexOf('?'));
-    } else {
-        return url
+    if(typeof url === 'string') {
+        return url.split('?')[0];
+    }else {
+        return url;
     }
 }
 

@@ -17,6 +17,7 @@ export default function (emit: Function) {
 
     // 监听dom变化
     observeDom = new MutationObserver(function (mutations) {
+        const changeDomList: Element[] = [];
         mutations.forEach(mutation => {
             switch(mutation.type) {
                 // dom操作
@@ -25,20 +26,25 @@ export default function (emit: Function) {
                     const addedNodesLength = addedNodes.length || 0;
                     for (let i = 0; i < addedNodesLength; i++) {
                         if (addedNodes[i] instanceof Element) {
+                            changeDomList.push(addedNodes[i] as Element);
                             domChangeHandler(addedNodes[i] as Element, emit);
                         }
                     }
                     break;
 
                 // 属性变化
-                case 'attributes': 
-                    if(!(mutation.target instanceof Element)) return;
+                case 'attributes':
+                    const target = mutation.target;
+                    // fix: document.createElement('img') 插入dom树之后会生成两条mutation，导致上报两次
+                    if(!(target instanceof Element) || changeDomList.indexOf(target) !== -1) {
+                        return;
+                    }
                     
-                    if(mutation.attributeName === 'src' && mutation.target instanceof HTMLImageElement) {
-                        domChangeHandler(mutation.target, emit);
+                    if(mutation.attributeName === 'src' && target instanceof HTMLImageElement) {
+                        domChangeHandler(target, emit);
                     } else {
                         // TODD 需要判断修改前后是否有改动到background-images
-                        const backgroundImage = getComputedStyle(mutation.target).backgroundImage;
+                        const backgroundImage = getComputedStyle(target).backgroundImage;
                         if(!backgroundImage || backgroundImage === 'none') return;
 
                         attributeChangeHandler(mutation, backgroundImage);
@@ -46,6 +52,7 @@ export default function (emit: Function) {
                     break;
             }
         })
+        changeDomList.length = 0;
     })
 
     observeDom.observe(document, {
@@ -57,6 +64,11 @@ export default function (emit: Function) {
     })
 }
 
+/**
+ * 当修改的dom节点是img或者script时添加onload事件，否则监听是否有background-image变动
+ * @param e 新增的dom节点
+ * @param emit 
+ */
 function domChangeHandler (e: Element, emit: Function) {
     // 之所以不能等于当前location.href，是因为在chrome中如果src没赋值，会默认取到location.href
     if((e instanceof HTMLImageElement || e instanceof HTMLScriptElement) && e.src && e.src !== location.href) {
@@ -91,6 +103,11 @@ function domChangeHandler (e: Element, emit: Function) {
 
 // 新建一个游离的div用来获取属性修改之前的background-image
 const div = document.createElement('div');
+/**
+ * 判断节点修改前后是否有background-image变动
+ * @param mutation 
+ * @param newBackgroundImage 
+ */
 function attributeChangeHandler (mutation: MutationRecord, newBackgroundImage: string) {
     const attributeName = mutation.attributeName;
     div.setAttribute(attributeName, mutation.oldValue);
