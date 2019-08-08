@@ -28,12 +28,12 @@ export default function overrideXhr(emitCgi: Function, emitAsset: Function) {
                 
                 // 根据content-type判断请求的是否是cgi
                 const contentType = xhr.getResponseHeader('content-type').toLowerCase();
-                if (contentType.indexOf('image') !== -1 || contentType.indexOf('javascript') !== -1 ) {
-                    // 图片或者js
-                    emitAsset && emitAsset(xhr.speedLog);
-                } else if (contentType.indexOf('json') !== -1) {
+                if (contentType.indexOf('json') !== -1) {
                     // cgi
                     emitCgi && emitCgi(xhr.speedLog);
+                } else {
+                    // 图片或者js
+                    emitAsset && emitAsset(xhr.speedLog);
                 }
             }
         })

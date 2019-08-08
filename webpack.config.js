@@ -8,7 +8,7 @@ let config = {
     // mode:"production",
     devtool: 'hidden-source-map',
     entry: {
-        'Aegis': path.join(__dirname, './src/index')
+        'aegis': path.join(__dirname, './src/index')
     },
     output: {
         path: path.join(__dirname, 'lib'),

@@ -27,14 +27,15 @@ const baseConfig: AegisConfig = {
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
     offlineLogExp: 3, // 离线日志过期时间，默认3天
-    offlineLogAuto: false // 是否自动询问服务器需要自动上报
+    offlineLogAuto: false, // 是否自动询问服务器需要自动上报
+    assetLogFullSize: 20 // 静态资源等待上报日志的最大量，当超过这个量会立即上报
 }
 
 export class Reporter {
     // 日志的缓存池
     private eventLog: EventLog[] = [] // 等待上报的日志
     private speedLog: SpeedLog[] = [] // 等待上报的日志
-    private imageLog: SpeedLog[] = [] // 等待上报的日志
+    private assetLog: SpeedLog[] = [] // 等待上报的日志
     private normalLog: NormalLog[] = [] //等待上报的日志
 
     private _config!: AegisConfig
@@ -68,7 +69,7 @@ export class Reporter {
 
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
-        this.startImageReportTask = this.createReportTask(this.imageLog, this.submitImageLog);
+        this.startImageReportTask = this.createReportTask(this.assetLog, this.submitImageLog);
         this.startSpeedReportTask = this.createReportTask(this.speedLog, this.submitSpeedLog);
     }
 
@@ -231,7 +232,7 @@ export class Reporter {
                 offlineLog
             } = this._config;
             
-            if (immediately) {
+            if (immediately || this.assetLog.length >= this._config.assetLogFullSize) {
                 this.submitImageLog([msg]); // 立即上报
             } else {
                 this.startImageReportTask(msg);

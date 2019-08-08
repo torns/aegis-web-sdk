@@ -26,12 +26,12 @@ export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
     
                 // 根据content-type判断请求的是否是cgi
                 const contentType = res.headers.get('content-type');
-                if (contentType.indexOf('image') !== -1 || contentType.indexOf('javascript') !== -1 ) {
-                    // 图片或者js
-                    emitAsset && emitAsset(speedLog);
-                } else if (contentType.indexOf('json') !== -1) {
+                if (contentType.indexOf('json') !== -1) {
                     // cgi
                     emitCgi && emitCgi(speedLog);
+                } else {
+                    // 图片或者js
+                    emitAsset && emitAsset(speedLog);
                 }
             }catch(err){}
             return res;
