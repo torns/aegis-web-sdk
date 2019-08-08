@@ -1,5 +1,5 @@
 import { SpeedLog } from '../interface/log';
-import { formatUrl } from '../utils';
+import { formatUrl } from '../utils/log';
 
 let alreadyOverride: boolean = false;
 

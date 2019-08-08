@@ -70,15 +70,6 @@ export function buildParam (obj: stringObj) {
     return str.join('&')
 }
 
-// 去掉query
-export function formatUrl (url: string) {
-    if(typeof url === 'string') {
-        return url.split('?')[0];
-    }else {
-        return url;
-    }
-}
-
 export function isNative (Ctor: any) {
     return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
 }
@@ -101,8 +92,4 @@ export function getAid (): string {
         window.localStorage.setItem('AEGIS_ID', aid);
     }
     return aid
-}
-
-export function urlIsHttps (url: string) : boolean {
-    return (/^https/).test(url);
 }

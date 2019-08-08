@@ -1,6 +1,6 @@
 import { SpeedLog } from '../interface/log'; 
 import overrideImage from '../override/image';
-import { formatUrl, urlIsHttps } from '../utils';
+import { formatUrl, urlIsHttps } from '../utils/log';
 
 let observeDom: MutationObserver;
 

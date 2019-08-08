@@ -54,7 +54,7 @@ export interface AegisConfig {
     repeat: number
     isDebug: boolean
     isWhiteList: boolean
-    monitorUrl: '//report.url.cn/report/report_vm' // 自定义统计上报地址
+    monitorUrl: string // 自定义统计上报地址
     offlineLog: boolean
     offlineLogExp: number // 离线日志过期时间，默认3天
     offlineLogAuto: boolean // 是否自动询问服务器需要自动上报

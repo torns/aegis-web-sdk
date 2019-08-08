@@ -23,7 +23,7 @@ const baseConfig: AegisConfig = {
     random: 1, // 抽样 (0-1] 1-全量
     delay: 1000, // 延迟上报
     maxLength: 500, // 每条日志内容最大长度，通常不建议修改
-    monitorUrl: '//report.url.cn/report/report_vm', // 自定义统计上报地址
+    monitorUrl: '//aegis.qq.com/monitor', // 自定义统计上报地址
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
     offlineLogExp: 3, // 离线日志过期时间，默认3天
@@ -135,7 +135,7 @@ export class Reporter {
     }
 
     handlerRecevieAsset = (data: SpeedLog) => {
-        this.reportImageLog(data);
+        this.reportAssetLog(data);
     }
     
     /* 上报普通日志 */
@@ -224,7 +224,7 @@ export class Reporter {
         }
     }
 
-    reportImageLog = (msg: SpeedLog, immediately = false) => {
+    reportAssetLog = (msg: SpeedLog, immediately = false) => {
         this._processor.processSpeedLog(msg, (_msg:SpeedLog) => {
             const {
                 id,
@@ -289,10 +289,6 @@ export class Reporter {
         }, (err: any) => {
             // TODO 
         });
-    }
-
-    // 提供一个自定义测速方法
-    speed (event: string, duration: number, immediately: boolean) {
     }
 
     // 用于统计上报
