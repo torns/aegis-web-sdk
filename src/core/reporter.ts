@@ -275,7 +275,7 @@ export class Reporter {
         });
     }
 
-    info = (msg: any, immediately = false) => {
+    info (msg: any, immediately = false) {
         this._processor.processNormalLog(msg, LOG_TYPE.INFO, (_msg: NormalLog) => {
             this.report(_msg, immediately);
         }, (err: any) => {
@@ -283,7 +283,7 @@ export class Reporter {
         });
     }
 
-    error = (msg: any, immediately = false) => {
+    error (msg: any, immediately = false) {
         this._processor.processNormalLog(msg, LOG_TYPE.ERROR, (_msg: NormalLog) => {
             this.report(_msg, immediately);
         }, (err: any) => {
