@@ -15,7 +15,7 @@ const baseConfig: AegisConfig = {
     reportAssetSpeed: false,
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
-    performanceUrl: '//aegis.qq.com/performance', // 上报页面navigation数据的接口地址
+    performanceUrl: '//aegis.qq.com/speed/performance', // 上报页面navigation数据的接口地址
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
@@ -233,7 +233,9 @@ export class Reporter {
             } = this._config;
             
             if (immediately || this.assetLog.length >= this._config.assetLogFullSize) {
-                this.submitImageLog([msg]); // 立即上报
+                this.assetLog.push(msg);
+                this.submitImageLog(this.assetLog); // 立即上报
+                this.assetLog.length = 0;
             } else {
                 this.startImageReportTask(msg);
             }

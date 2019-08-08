@@ -27,8 +27,10 @@ export default function overrideXhr(emitCgi: Function, emitAsset: Function) {
                 xhr.speedLog.duration = Date.now() - sendTime;
                 
                 // 根据content-type判断请求的是否是cgi
-                const contentType = xhr.getResponseHeader('content-type').toLowerCase();
-                if (contentType.indexOf('json') !== -1) {
+                const contentType = xhr.getResponseHeader('content-type');
+                if (typeof contentType !== 'string') return;
+
+                if (contentType.toLowerCase().indexOf('json') !== -1) {
                     // cgi
                     emitCgi && emitCgi(xhr.speedLog);
                 } else {

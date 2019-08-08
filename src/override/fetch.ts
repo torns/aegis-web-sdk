@@ -26,7 +26,9 @@ export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
     
                 // 根据content-type判断请求的是否是cgi
                 const contentType = res.headers.get('content-type');
-                if (contentType.indexOf('json') !== -1) {
+                if (typeof contentType !== 'string') return;
+
+                if (contentType.toLowerCase().indexOf('json') !== -1) {
                     // cgi
                     emitCgi && emitCgi(speedLog);
                 } else {
