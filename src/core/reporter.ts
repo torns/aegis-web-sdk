@@ -99,7 +99,7 @@ export class Reporter {
             }catch(e) {}
         }
 
-        this._reportUrl = `${config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
+        this._reportUrl = `${this._config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
         this._speedReportUrl = this._config.speedUrl;
 
         return this._config;
