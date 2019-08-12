@@ -18,22 +18,30 @@ export function formatParams(data: any[]) {
     let count = 0;
     data.forEach((error, index) => {
         if (isOBJ(error)) {
-            for (const key in error) {
+            const keys = Object.getOwnPropertyNames(error);
+            keys.forEach((key) => {
                 let value = error[key]
                 if (!isEmpty(value)) {
                     if (isOBJ(value)) {
                         try {
-                            value = JSON.stringify(value)
+                            value = JSON.stringify(value);
                         } catch (err) {
-                            value = '[BJ_REPORT detect value stringify error] ' + err.toString()
+                            value = '[BJ_REPORT detect value stringify error] ' + err.toString();
                         }
                     }
-                    params.push(key + '[' + count + ']=' + encodeURIComponent(value))
+                    params.push(key + '[' + count + ']=' + encodeURIComponent(value));
                 }
+            })
+        } else {
+            let value;
+            try{
+                value = JSON.stringify(error);
+            } catch(err) {
+                value = '[BJ_REPORT detect value stringify error] ' + err.toString();
             }
-            count ++;
+            params.push('report' + '[' + count + ']=' + encodeURIComponent(value));
         }
-
+        count ++;
     });
 
     return params.join('&') + `&count=${count}`;
