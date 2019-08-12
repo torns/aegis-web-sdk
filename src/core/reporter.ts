@@ -8,7 +8,7 @@ import { extend, getAid, canUseResourceTiming } from '../utils/index';
 
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
-    uin: getAid(), // user id
+    uin: 0, // user id
     isDebug: false,
     isWhiteList: false,
     reportApiSpeed: false,
@@ -91,6 +91,12 @@ export class Reporter {
         if (!this._config.speedUrl) {
             console.warn('测速上报地址speedUrl不能设置为空');
             this._config.speedUrl = '//aegis.qq.com/speed';
+        }
+
+        if (!this._config.uin) {
+            try {
+                this._config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) || getAid();
+            }catch(e) {}
         }
 
         this._reportUrl = `${config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
