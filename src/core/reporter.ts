@@ -28,7 +28,8 @@ const baseConfig: AegisConfig = {
     offlineLog: false,
     offlineLogExp: 3, // 离线日志过期时间，默认3天
     offlineLogAuto: false, // 是否自动询问服务器需要自动上报
-    assetLogFullSize: 20 // 静态资源等待上报日志的最大量，当超过这个量会立即上报
+    assetLogFullSize: 20, // 静态资源等待上报日志的最大量，当超过这个量会立即上报
+    restfulApiList: [] // 列出restful接口，将对这些接口归并上报
 }
 
 export class Reporter {

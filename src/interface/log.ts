@@ -62,4 +62,5 @@ export interface AegisConfig {
     onReport ?:Function // 与上报同时触发，用于统计相关内容
     beforeReport ?: Function // aop：上报前执行，如果返回 false 则不上报
     assetLogFullSize ?: number // 静态资源等待上报日志的最大量，当超过这个量会立即上报
+    restfulApiList ?: any[] // 列出restful接口，将对这些接口归并上报
 }

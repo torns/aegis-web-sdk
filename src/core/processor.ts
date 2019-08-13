@@ -7,6 +7,7 @@ import lengthLimit from '../interceptors/length-limit';
 import sampling from '../interceptors/sampling';
 import { isOBJ, extend } from '../utils/index';
 import imageIgnore from '../interceptors/image-ignore';
+import restful from '../interceptors/restful';
 
 
 
@@ -24,6 +25,7 @@ export default class Processor{
 
         this.speedInterceptor = new InterceptorManager();
         this.speedInterceptor.use(imageIgnore());
+        this.speedInterceptor.use(restful(config.restfulApiList));
     }
 
 
