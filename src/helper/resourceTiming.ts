@@ -2,7 +2,7 @@ import { SpeedLog } from '../interface/log';
 import { formatUrl } from '../utils/log';
 
 const CGI_INITIATOR_TYPE = ['fetch', 'xmlhttprequest'],
-      ASSETS_INITIATOR_TYPE = ['img', 'css', 'script'],
+      ASSETS_INITIATOR_TYPE = ['img', 'css', 'script', 'link'],
       assetsLogEmitors: Function[] = [],
       cgiLogEmitors: Function[] = [];
 
@@ -33,8 +33,7 @@ function generateLog(entry: PerformanceResourceTiming): SpeedLog{
         url: formatUrl(entry.name), // 请求地址,
         method: 'get', //请求方法
         duration: entry.duration, // 耗时
-        // ret: 0, // cgi 的状态码，如果是图片或其他的，默认为 0 
-        status: 200, // http 返回码
+        status: 200, // 200成功  400失败
     }
 }
 
