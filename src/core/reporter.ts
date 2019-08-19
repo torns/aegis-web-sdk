@@ -1,4 +1,5 @@
-import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig, ErrorMsg } from '../interface/log'; 
+import { SpeedLog, EventLog, NormalLog, LOG_TYPE, ErrorMsg } from '../interface/log'; 
+import { AegisConfig } from '../interface/config';
 import Collector from './collector';
 import Processor from './processor';
 import OfflineLog from '../helper/offlinelog';
@@ -203,34 +204,6 @@ export class Reporter {
         }
     }
 
-    // TODO
-    report = (msg: any, immediately = false) => {
-        const {
-            id,
-            onReport,
-            offlineLog
-        } = this._config;
-
-        if(offlineLog) {
-            const offline = this._offlineLog;
-
-            // 默认全部写入离线日志
-            const prefix = 'badjs_' + this._config.id + this._config.uin;
-
-            offline.save2Offline(prefix, msg, this._config);
-        }
-        
-        if (immediately) {
-            this.submitLog([msg]); // 立即上报
-        } else {
-            this.startReportTask(msg);
-        }
-
-        if(onReport) {
-            onReport(id, msg);
-        }
-    }
-
     reportAssetLog = (msg: SpeedLog, immediately = false) => {
         this._processor.processSpeedLog(msg, (_msg:SpeedLog) => {
             const {
@@ -270,6 +243,34 @@ export class Reporter {
                 onReport(id, msg);
             }
         });
+    }
+
+    // TODO
+    report = (msg: any, immediately = false) => {
+        const {
+            id,
+            onReport,
+            offlineLog
+        } = this._config;
+
+        if(offlineLog) {
+            const offline = this._offlineLog;
+
+            // 默认全部写入离线日志
+            const prefix = 'badjs_' + this._config.id + this._config.uin;
+
+            offline.save2Offline(prefix, msg, this._config);
+        }
+        
+        if (immediately) {
+            this.submitLog([msg]); // 立即上报
+        } else {
+            this.startReportTask(msg);
+        }
+
+        if(onReport) {
+            onReport(id, msg);
+        }
     }
 
     debug (msg: any, immediately = false) {

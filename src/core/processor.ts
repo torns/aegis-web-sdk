@@ -1,4 +1,5 @@
-import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig, ErrorMsg } from '../interface/log'; 
+import { SpeedLog, EventLog, NormalLog, LOG_TYPE, ErrorMsg } from '../interface/log'; 
+import { AegisConfig } from '../interface/config';
 import InterceptorManager from '../helper/interceptors-manager';
 import formatLog from '../interceptors/formatlog';
 import ignore from '../interceptors/ignore';
@@ -8,7 +9,7 @@ import sampling from '../interceptors/sampling';
 import { isOBJ, extend } from '../utils/index';
 import imageIgnore from '../interceptors/image-ignore';
 import restful from '../interceptors/restful';
-
+import beforeReport from '../interceptors/beforeReport';
 
 
 export default class Processor{
@@ -22,6 +23,7 @@ export default class Processor{
         this.logInterceptor.use(lengthLimit(config.maxLength));
         this.logInterceptor.use(repeatLimit(config.repeat));
         this.logInterceptor.use(ignore(config.ignore));
+        this.logInterceptor.use(beforeReport(config));
 
         this.speedInterceptor = new InterceptorManager();
         this.speedInterceptor.use(imageIgnore());

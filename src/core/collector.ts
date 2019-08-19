@@ -1,4 +1,5 @@
-import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interface/log';
+import { SpeedLog, EventLog, NormalLog, LOG_TYPE } from '../interface/log';
+import { AegisConfig } from '../interface/config';
 import { isOBJByType, formatStackMsg, canUseResourceTiming } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 import cgiSpeed from '../helper/cgiSpeed';
