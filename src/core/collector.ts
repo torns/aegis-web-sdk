@@ -1,8 +1,9 @@
 import { SpeedLog, EventLog, NormalLog, LOG_TYPE, AegisConfig } from '../interface/log';
-import { isOBJByType, formatStackMsg } from '../utils';
+import { isOBJByType, formatStackMsg, canUseResourceTiming } from '../utils';
 import EventEmiter from '../helper/event-emiter';
 import cgiSpeed from '../helper/cgiSpeed';
 import assetSpeed from '../helper/assetSpeed';
+import resourceTiming from '../helper/resourceTiming';
 // 上报收集器
 
 let instance: Collector;
@@ -31,7 +32,10 @@ export default class Collector extends EventEmiter {
     }
 
     private bindAssetEvent() {
-        assetSpeed(this.onAssetResponse);
+        if (canUseResourceTiming()) {
+            resourceTiming.getAssetsLog(this.onAssetResponse);
+        }
+        // assetSpeed(this.onAssetResponse);
     }
 
     private bindErrorEvent() {

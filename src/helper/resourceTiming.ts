@@ -1,11 +1,10 @@
-import { SpeedLog } from '../interface/log'; 
+import { SpeedLog } from '../interface/log';
+import { formatUrl } from '../utils/log';
 
-const IMG_INITIATOR_TYPE = ['img', 'css'],
-      CGI_INITIATOR_TYPE = ['fetch', 'xmlhttprequest'],
-      SCRIPT_INITIATOR_TYPE = ['script'],
-      imgLogEmitors: Function[] = [],
-      cgiLogEmitors: Function[] = [],
-      scriptLogEmitors: Function[] = [];
+const CGI_INITIATOR_TYPE = ['fetch', 'xmlhttprequest'],
+      ASSETS_INITIATOR_TYPE = ['img', 'css', 'script'],
+      assetsLogEmitors: Function[] = [],
+      cgiLogEmitors: Function[] = [];
 
 let colletcing: boolean = false,
     timer: number;
@@ -15,8 +14,8 @@ function collect(): void{
     performance.clearResourceTimings();
     for(let i = 0, l= entries.length; i < l; i++) {
         const entry = entries[i];
-        if (IMG_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
-            imgLogEmitors.forEach(emit => {
+        if (ASSETS_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
+            assetsLogEmitors.forEach(emit => {
                 emit(generateLog(entry));
             });
         }
@@ -25,21 +24,16 @@ function collect(): void{
                 emit(generateLog(entry));
             });
         }
-        if (SCRIPT_INITIATOR_TYPE.indexOf(entry.initiatorType) > -1) {
-            scriptLogEmitors.forEach(emit => {
-                emit(generateLog(entry));
-            })
-        }
     }
 }
 
 function generateLog(entry: PerformanceResourceTiming): SpeedLog{
-    const timeOrigin = performance.timeOrigin;
+    // const timeOrigin = performance.timeOrigin;
     return {
-        url: entry.name, // 请求地址,
+        url: formatUrl(entry.name), // 请求地址,
         method: 'get', //请求方法
         duration: entry.duration, // 耗时
-        ret: 0, // cgi 的状态码，如果是图片或其他的，默认为 0 
+        // ret: 0, // cgi 的状态码，如果是图片或其他的，默认为 0 
         status: 200, // http 返回码
     }
 }
@@ -59,17 +53,13 @@ function stopCollect(): void{
 }
 
 export default {
-    getImageLog(emit: Function): void {
+    getAssetsLog(emit: Function): void {
         startCollect();
-        imgLogEmitors.push(emit);
+        assetsLogEmitors.push(emit);
     },
     getCgiLog(emit: Function): void {
         startCollect();
         cgiLogEmitors.push(emit);
-    },
-    getScriptLog(emit: Function): void {
-        startCollect();
-        scriptLogEmitors.push(emit);
     },
     stopCollect
 }

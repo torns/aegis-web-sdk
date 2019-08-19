@@ -16,11 +16,12 @@
     <script>
         a = new Aegis({
             id: 111,
-            url: 'http://10.65.94.86:6543',
+            // url: 'http://10.65.94.86:6543',
             speedUrl: 'http://10.65.94.86:6543/speed',
             performanceUrl: 'http://10.65.94.86:6543/performance',
             reportApiSpeed: true,
-            reportAssetSpeed: true
+            reportAssetSpeed: true,
+            restfulApiList: ['https://api.tone.qq.com/cgi-bin/interface/doRequest']
         });
         // setTimeout(() => {
         //     location.reload();
@@ -35,7 +36,7 @@
         // cgi
         function sendXhr() {
             const xhr = new XMLHttpRequest();
-            xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest');
+            xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest/' + Date.now());
             xhr.send();
         }
         function sendFetch() {
@@ -102,27 +103,6 @@
     <button onclick="fetchScript()">fetch请求脚本</button>
     <div id="imageBox" class="b c">
         <img id="img" src=""/>
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
-        <img src="http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg">
     </div>
 </body>
 </html>
