@@ -9,7 +9,7 @@ import sampling from '../interceptors/sampling';
 import { isOBJ, extend } from '../utils/index';
 import imageIgnore from '../interceptors/image-ignore';
 import restful from '../interceptors/restful';
-import beforeReport from '../interceptors/beforeReport';
+// import beforeReport from '../interceptors/beforeReport';
 
 
 export default class Processor{
@@ -23,7 +23,7 @@ export default class Processor{
         this.logInterceptor.use(lengthLimit(config.maxLength));
         this.logInterceptor.use(repeatLimit(config.repeat));
         this.logInterceptor.use(ignore(config.ignore));
-        this.logInterceptor.use(beforeReport(config));
+        // this.logInterceptor.use(beforeReport(config));
 
         this.speedInterceptor = new InterceptorManager();
         this.speedInterceptor.use(imageIgnore());
@@ -43,12 +43,19 @@ export default class Processor{
 
     // 普通日志
     processNormalLog(_msg: any, logType: LOG_TYPE, success: Function, fail ?: Function) {
-        const msg = isOBJ(_msg) ? extend({}, _msg, {
-            level: logType
-        }) : {
-            msg: _msg,
-            level: logType
-        };
+        let msg;
+        if (_msg instanceof Error) {
+            msg = {error: _msg};
+        } else if (isOBJ(_msg)) {
+            msg = extend({}, _msg, {
+                level: logType
+            });
+        } else {
+            msg = {
+                msg: _msg,
+                level: logType
+            };
+        }
 
         this.logInterceptor.run(msg, success, fail);
     }

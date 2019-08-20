@@ -44,8 +44,8 @@ export default function () {
             });
         } else {
             let _unformatMsg = msg;
-            
-            if(typeof _unformatMsg !== 'string') {
+            // undefined会报错
+            if(_unformatMsg && typeof _unformatMsg !== 'string') {
                 _unformatMsg = _unformatMsg.toString();
             }
 

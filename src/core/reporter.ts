@@ -250,8 +250,12 @@ export class Reporter {
         const {
             id,
             onReport,
+            beforeReport,
             offlineLog
         } = this._config;
+        if (beforeReport && beforeReport(msg) === false) {
+            return
+        }
 
         if(offlineLog) {
             const offline = this._offlineLog;
