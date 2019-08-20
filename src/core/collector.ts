@@ -49,25 +49,6 @@ export default class Collector extends EventEmiter {
         }
     }
 
-    startImageCollectTask = () => {
-        // 这个方法还有待优化
-        const task = function () {
-            setTimeout(() => {
-                const resources = performance.getEntriesByType("resource");
-
-                const imgResource = [];
-                const scriptResource = [];
-                const cssResource = [];
-
-                if(resources.length <= 0) {
-                    task();
-                } else {
-
-                }
-            }, 5000); // 第一版本 5s 收集一次， 如果有数据了，就停止，后面再调整这个策略， 包括后面的 JS 测速上报。
-        };
-    }
-
     // 请求返回时
     onXhrResponse = (data: SpeedLog) => {
         this.emit('onRecevieXhr', data);

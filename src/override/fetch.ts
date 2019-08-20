@@ -23,7 +23,7 @@ export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
         fetchPromise.then(function(res: any){
             try {
                 speedLog.duration = Date.now() - sendTime;
-                speedLog.status = 200;
+                speedLog.status = res.status === 200 ? 200 : 400;
     
                 // 根据content-type判断请求的是否是cgi
                 const contentType = res.headers.get('content-type');

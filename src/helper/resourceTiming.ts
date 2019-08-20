@@ -41,7 +41,21 @@ function startCollect(): void{
     if (colletcing) return;
     colletcing = true;
 
+    // 加载成功的资源上报
     timer = setInterval(collect, 2000);
+
+    // 加载失败的静态资源上报
+    document.addEventListener('error', function aegisAssetsErrorHandler (event) {
+        if (!event) return;
+        const target: any = event.target || event.srcElement;
+        const failedLog: SpeedLog = {
+            url: formatUrl(target.src || target.href),
+            status: 400
+        }
+        assetsLogEmitors.forEach(emit => {
+            emit(failedLog);
+        });
+    }, true)
 
     performance.onresourcetimingbufferfull = collect;
 }
