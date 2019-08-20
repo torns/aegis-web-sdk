@@ -1,5 +1,6 @@
 import { extend, equal } from '../utils/index';
-import { ErrorMsg, AegisConfig } from '../interface/log';
+import { ErrorMsg } from '../interface/log';
+import { AegisConfig } from '../interface/config';
 
 let offlineBuffer: ErrorMsg[] = [];
 
