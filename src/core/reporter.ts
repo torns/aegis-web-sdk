@@ -34,7 +34,6 @@ const baseConfig: AegisConfig = {
 
 export class Reporter {
     // 日志的缓存池
-    private eventLog: EventLog[] = [] // 等待上报的日志
     private speedLog: SpeedLog[] = [] // 等待上报的日志
     private assetLog: SpeedLog[] = [] // 等待上报的日志
     private normalLog: NormalLog[] = [] //等待上报的日志
@@ -44,8 +43,6 @@ export class Reporter {
     private _processor!: Processor
     private _offlineLog!: OfflineLog
     private _reportUrl!: string
-    private _reportTask!: number
-    private _reportSpeedTask!: number
     private _speedReportUrl!: string
     private startImageReportTask !: Function
     private startSpeedReportTask !: Function
@@ -65,8 +62,8 @@ export class Reporter {
         this.reportPerformance();
 
         this._collector.on('onRecevieError', this.handlerRecevieError);
-        this._collector.on('onRecevieXhr', this.handlerRecevieXhr)
-        this._collector.on('onRecevieAsset', this.handlerRecevieAsset);
+        this._collector.on('onRecevieXhr', this.reportSpeedLog)
+        this._collector.on('onRecevieAsset', this.reportAssetLog);
 
 
         this.startReportTask = this.createReportTask(this.normalLog, this.submitLog);
@@ -136,14 +133,6 @@ export class Reporter {
     handlerRecevieError = (data: any) => {
         this.report(data, true);
     }
-
-    handlerRecevieXhr = (data: any) => {
-        this.reportSpeedLog(data);
-    }
-
-    handlerRecevieAsset = (data: SpeedLog) => {
-        this.reportAssetLog(data);
-    }
     
     /* 上报普通日志 */
     submitLog = (msg: any[]) => {
@@ -185,7 +174,7 @@ export class Reporter {
         send(_url);
     }
 
-    createReportTask = <T>(msgStore: Array<T>, reportFunction: Function) => {
+    createReportTask <T>(msgStore: Array<T>, reportFunction: Function) {
         let msgList = msgStore;
         let timer = 0;
         return (msg: T) => {
