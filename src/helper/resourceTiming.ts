@@ -32,7 +32,7 @@ function generateLog(entry: PerformanceResourceTiming): SpeedLog{
     return {
         url: formatUrl(entry.name), // 请求地址,
         method: 'get', //请求方法
-        duration: entry.duration, // 耗时
+        duration: Number(entry.duration.toFixed(2)), // 耗时
         status: 200, // 200成功  400失败
     }
 }
