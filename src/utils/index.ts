@@ -48,7 +48,14 @@ export function formatStackMsg (error: Error) {
         .slice(0, 9)
         .join('@')
         .replace(/\?[^:]+/gi, '')
-    const msg = error.toString()
+    let msg = error.toString();
+    if (msg.indexOf('[object ') === 0) {
+        try {
+            msg = JSON.stringify(error);
+        } catch (err) {
+            msg = '[Aegis detect value stringify error] ' + err.toString();
+        }
+    }
     if (stack.indexOf(msg) < 0) {
         stack = msg + '@' + stack
     }

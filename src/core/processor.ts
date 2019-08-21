@@ -43,19 +43,15 @@ export default class Processor{
 
     // 普通日志
     processNormalLog(_msg: any, logType: LOG_TYPE, success: Function, fail ?: Function) {
-        let msg;
+        let msg: any;
         if (_msg instanceof Error) {
             msg = {error: _msg};
-        } else if (isOBJ(_msg)) {
-            msg = extend({}, _msg, {
-                level: logType
-            });
         } else {
             msg = {
-                msg: _msg,
-                level: logType
+                msg: _msg
             };
         }
+        msg.level = logType;
 
         this.logInterceptor.run(msg, success, fail);
     }

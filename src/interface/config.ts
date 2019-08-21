@@ -14,7 +14,6 @@ export interface AegisConfig {
     delay: number
     maxLength: 500
     repeat: number
-    isDebug: boolean
     isWhiteList: boolean
     monitorUrl: string // 自定义统计上报地址
     offlineLog: boolean

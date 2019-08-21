@@ -10,7 +10,6 @@ import { extend, getAid, canUseResourceTiming } from '../utils/index';
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
     uin: 0, // user id
-    isDebug: false,
     isWhiteList: false,
     reportApiSpeed: false,
     reportAssetSpeed: false,
@@ -135,7 +134,7 @@ export class Reporter {
     }
 
     handlerRecevieError = (data: any) => {
-        this.error(data, true);
+        this.report(data, true);
     }
 
     handlerRecevieXhr = (data: any) => {
@@ -245,8 +244,28 @@ export class Reporter {
         });
     }
 
+    debug (msg: any, immediately = false) {
+        this._processNormalLog(msg, LOG_TYPE.DEBUG, immediately);
+    }
+
+    info (msg: any, immediately = false) {
+        this._processNormalLog(msg, LOG_TYPE.INFO, immediately);
+    }
+
+    report (msg: any, immediately = false) {
+        this._processNormalLog(msg, LOG_TYPE.ERROR, immediately);
+    }
+
+    _processNormalLog (msg: any, logType: number, immediately: boolean = false) {
+        this._processor.processNormalLog(msg, logType, (_msg: NormalLog) => {
+            this._report(_msg, immediately);
+        }, (err: any) => {
+            // TODO 
+        });
+    }
+
     // TODO
-    report = (msg: any, immediately = false) => {
+    _report (msg: any, immediately = false) {
         const {
             id,
             onReport,
@@ -277,38 +296,10 @@ export class Reporter {
         }
     }
 
-    debug (msg: any, immediately = false) {
-        if(this._config.isDebug) {
-            return;
-        }
-
-        this._processor.processNormalLog(msg, LOG_TYPE.DEBUG, (_msg: NormalLog) => {
-            this.report(_msg, immediately);
-        }, (err: any) => {
-            // TODO 
-        });
-    }
-
-    info (msg: any, immediately = false) {
-        this._processor.processNormalLog(msg, LOG_TYPE.INFO, (_msg: NormalLog) => {
-            this.report(_msg, immediately);
-        }, (err: any) => {
-            // TODO 
-        });
-    }
-
-    error (msg: any, immediately = false) {
-        this._processor.processNormalLog(msg, LOG_TYPE.ERROR, (_msg: NormalLog) => {
-            this.report(_msg, immediately);
-        }, (err: any) => {
-            // TODO 
-        });
-    }
-
     // 用于统计上报
     static monitor = monitor
 
-    monitor = monitor
+    monitor: any
 
     // 初始化离线数据库
     _initOffline = () => {

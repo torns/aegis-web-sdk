@@ -3,7 +3,9 @@ import { formatStackMsg, isOBJ } from '../utils';
 
 export default function () {
     return function(data: any, success: Function, fail: Function) {
-        const {
+        !data && fail();
+
+        let {
             msg,
             rowNum = 0,
             colNum = 0,
@@ -12,6 +14,7 @@ export default function () {
             level = LOG_TYPE.ERROR
         } = data;
 
+        // window.onerror上报的
         if(error && error.stack) {
             const regResult = error.stack.match('https?://[^\n]+');
             let url = regResult ? regResult[0] : ''
@@ -27,30 +30,38 @@ export default function () {
                 target: url.replace(rowCols[0] as string, '') || target,
                 level
             });
-        } else if(isOBJ(msg)) {
-            let value = '';
-            try {
-                value = JSON.stringify(msg);
-            } catch (err) {
-                value = '[BJ_REPORT detect value stringify error] ' + err.toString()
+        }
+        // 用户主动上报
+        else if (msg) {
+            let _msg;
+            // 优先使用toString
+            if(typeof msg.toString === 'function') {
+                _msg = msg.toString();
+                if (_msg.indexOf('[object ') === 0) {
+                    _msg = '';
+                }
+            }
+            // 没有toString或者toString返回的没意义，则使用JSON.stringify
+            if (!_msg) {
+                try {
+                    _msg = JSON.stringify(msg);
+                } catch (err) {
+                    _msg = '[Aegis detect value stringify error] ' + err.toString();
+                }
             }
 
             success({
-                msg: value,
+                msg: _msg,
                 rowNum,
                 colNum,
-                target,
+                target: location.href,
                 level
             });
-        } else {
-            let _unformatMsg = msg;
-            // undefined会报错
-            if(_unformatMsg && typeof _unformatMsg !== 'string') {
-                _unformatMsg = _unformatMsg.toString();
-            }
-
+        }
+        // 用户上报了false | 0 | null之类的数据
+        else {
             success({
-                msg: _unformatMsg,
+                msg: msg,
                 rowNum,
                 colNum,
                 target: location.href,

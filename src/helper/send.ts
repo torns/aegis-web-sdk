@@ -26,7 +26,7 @@ export function formatParams(data: any[]) {
                         try {
                             value = JSON.stringify(value);
                         } catch (err) {
-                            value = '[BJ_REPORT detect value stringify error] ' + err.toString();
+                            value = '[Aegis detect value stringify error] ' + err.toString();
                         }
                     }
                     params.push(key + '[' + count + ']=' + encodeURIComponent(value));
@@ -37,7 +37,7 @@ export function formatParams(data: any[]) {
             try{
                 value = JSON.stringify(error);
             } catch(err) {
-                value = '[BJ_REPORT detect value stringify error] ' + err.toString();
+                value = '[Aegis detect value stringify error] ' + err.toString();
             }
             params.push('report' + '[' + count + ']=' + encodeURIComponent(value));
         }
