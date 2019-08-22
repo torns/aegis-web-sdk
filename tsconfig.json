@@ -6,6 +6,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "sourceMap": true,
+        "lib": ["es2015", "dom"],
         "outDir": "lib",  // TS文件编译后会放入到此文件夹内
         "baseUrl": ".",
         "strict": true,

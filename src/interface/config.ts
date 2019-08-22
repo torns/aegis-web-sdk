@@ -1,6 +1,7 @@
 export interface AegisConfig {
     id: number | string
     uin: number | string
+    aid ?: string
     version: number
     reportAssetSpeed ?: boolean // 是否开启静态资源测速
     reportApiSpeed ?: boolean // 是否开启接口测速

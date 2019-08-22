@@ -93,9 +93,11 @@ export class Reporter {
 
         if (!this._config.uin) {
             try {
-                this._config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) || getAid();
+                this._config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) || 0;
             }catch(e) {}
         }
+
+        getAid().then((aid) => {this._config.aid = aid});
 
         this._reportUrl = `${this._config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
         this._speedReportUrl = this._config.speedUrl;

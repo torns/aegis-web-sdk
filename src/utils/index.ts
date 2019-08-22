@@ -88,15 +88,36 @@ export function canUseResourceTiming (): boolean {
     return false;
 }
 
-// 生成aid
-export function getAid (): string {
+// 获取aid，aid支持跨域
+// https://pub.idqqimg.com/ab6592966bbc4f5ab51193d3612f609a.html
+// 该页面会将aid通过postmessage传过来
+// TODO，该页面的测速数据是否需要屏蔽
+export function getAid (): Promise<string> {
     let aid = window.localStorage.getItem('AEGIS_ID');
     if (!aid) {
-        aid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {  
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);  
-            return v.toString(16);  
-        });
-        window.localStorage.setItem('AEGIS_ID', aid);
+        return new Promise((resolve, reject) => {
+            window.addEventListener('message', function getAidFromIframe(event) {
+                if (event.origin === 'https://pub.idqqimg.com') {
+                    if (event.data) {
+                        window.localStorage.setItem('AEGIS_ID', event.data);
+                        resolve(event.data);
+                    } else {
+                        reject();
+                    }
+                }
+            });
+            const iframe: HTMLIFrameElement = document.createElement('iframe');
+            iframe.src = 'https://pub.idqqimg.com/ab6592966bbc4f5ab51193d3612f609a.html';
+            iframe.width = '0';
+            iframe.height = '0';
+            if (document.body) {
+                document.body.append(iframe);
+            } else {
+                window.addEventListener('load', () => {
+                    document.body.append(iframe);
+                })
+            }
+        })
     }
-    return aid
+    return Promise.resolve(aid);
 }
