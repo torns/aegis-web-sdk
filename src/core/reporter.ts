@@ -189,7 +189,7 @@ export class Reporter {
             timer = setTimeout(() => {
                 reportFunction(msgList);
                 timer = 0; // clear task
-                msgList = []; // clear pool 
+                msgList.length = 0; // clear pool 
             }, this._config.delay);
         }
     }

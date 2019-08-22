@@ -15,24 +15,13 @@
 
     <script>
         a = new Aegis({
-            id: 111,
+            id: 666,
             // url: 'http://10.65.94.86:6543',
-            speedUrl: 'http://10.65.94.86:6543/speed',
-            performanceUrl: 'http://10.65.94.86:6543/performance',
+            // speedUrl: 'http://10.65.94.86:6543/speed',
+            // performanceUrl: 'http://10.65.94.86:6543/performance',
             reportApiSpeed: true,
-            reportAssetSpeed: true,
-            restfulApiList: ['https://api.tone.qq.com/cgi-bin/interface/doRequest']
+            reportAssetSpeed: true
         });
-        // setTimeout(() => {
-        //     location.reload();
-        // }, 3000)
-
-        // 压测
-        // setInterval(() => {
-        //     insertBackgroundImage();
-        //     insertScript();
-        // }, 1000)
-
         // cgi
         function sendXhr() {
             const xhr = new XMLHttpRequest();
@@ -104,5 +93,14 @@
     <div id="imageBox" class="b c">
         <img id="img" src=""/>
     </div>
+
+    <script>
+        let imgString = `<img src="http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg`,
+            imgs = '';
+        for (let i = 0; i < 1000; i++) {
+            imgs = imgs + imgString + `?t=${i}"/>`;
+        }
+        document.querySelector('#imageBox').innerHTML = imgs;
+    </script>
 </body>
 </html>
