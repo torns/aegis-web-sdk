@@ -290,7 +290,7 @@ export class Reporter {
     // 用于统计上报
     static monitor = monitor
 
-    monitor: any
+    monitor: any = monitor
 
     // 初始化离线数据库
     _initOffline = () => {
