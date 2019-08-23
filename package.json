@@ -1,6 +1,6 @@
 {
   "name": "@tencent/aegis-web-sdk",
-  "version": "0.9.4",
+  "version": "0.9.8",
   "description": "",
   "main": "lib/aegis.min.js",
   "scripts": {

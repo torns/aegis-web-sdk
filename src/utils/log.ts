@@ -8,7 +8,7 @@ export function formatUrl (url: string) {
             prefix = location.protocol + '//';
         }
         if(url.indexOf(location.host) === -1) {
-            prefix = prefix + location.host + '/';
+            prefix = prefix + location.host;
         }
         url = prefix + url;
 
