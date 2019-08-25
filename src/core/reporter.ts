@@ -2,10 +2,11 @@ import { SpeedLog, EventLog, NormalLog, LOG_TYPE, ErrorMsg } from '../interface/
 import { AegisConfig } from '../interface/config';
 import Collector from './collector';
 import Processor from './processor';
+import sendPerformance from '../helper/performance';
 import OfflineLog from '../helper/offlinelog';
 import monitor from '../helper/monitor';
 import { send, formatParams, sendOffline } from '../helper/send';
-import { extend, getAid, canUseResourceTiming } from '../utils/index';
+import { extend, getAid } from '../utils/index';
 
 const baseConfig: AegisConfig = {
     id: 0, // 上报 id
@@ -15,7 +16,6 @@ const baseConfig: AegisConfig = {
     reportAssetSpeed: false,
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
-    performanceUrl: '//aegis.qq.com/speed/performance', // 上报页面navigation数据的接口地址
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
@@ -31,6 +31,10 @@ const baseConfig: AegisConfig = {
     assetLogFullSize: 20, // 静态资源等待上报日志的最大量，当超过这个量会立即上报
     restfulApiList: [] // 列出restful接口，将对这些接口归并上报
 }
+
+// 引入一次sdk发送一次性能数据
+// TODO  是否需要暴露上报地址配置项
+sendPerformance();
 
 export class Reporter {
     // 日志的缓存池
@@ -59,7 +63,6 @@ export class Reporter {
         }
 
         this.reportPv();
-        this.reportPerformance();
 
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.reportSpeedLog)
@@ -107,29 +110,6 @@ export class Reporter {
 
     reportPv() {
         send(`${this._config.url}/${this._config.id}`);
-    }
-
-    reportPerformance(): void {
-        if (!canUseResourceTiming()) return;
-
-        const t: PerformanceTiming = performance.timing;
-        if (t.domComplete) {
-            this.sendPerformance();
-        } else {
-            window.addEventListener('load', () => {
-                setTimeout(this.sendPerformance, 0);
-            })
-        }
-    }
-
-    sendPerformance = () => {
-        const t: PerformanceTiming = performance.timing,
-              loadPage: number = t.loadEventEnd - t.navigationStart,
-              domReady: number = t.domComplete - t.responseEnd,
-              lookupDomain: number = t.domainLookupEnd - t.domainLookupStart,
-              request: number = t.responseEnd - t.requestStart,
-              config: AegisConfig = this._config;
-        send(`${this._config.performanceUrl}?id=${config.id}&uin=${config.uin}&version=${config.version}&loadPage=${loadPage}&domReady=${domReady}&lookupDomain=${lookupDomain}&request=${request}`);
     }
 
     handlerRecevieError = (data: any) => {

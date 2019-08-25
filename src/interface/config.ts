@@ -7,7 +7,6 @@ export interface AegisConfig {
     reportApiSpeed ?: boolean // 是否开启接口测速
     url: string
     speedUrl: string
-    performanceUrl ?: string 
     ext: object | null
     level: number
     ignore: any[]
