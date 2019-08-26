@@ -13,7 +13,6 @@ export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
         const args = Array.prototype.slice.call(arguments);
         
         const speedLog: SpeedLog = {
-            url: formatUrl(args[0]),
             method: args[1] ? args[1].method || 'get' : 'get'
         };
         const sendTime = Date.now();
@@ -22,6 +21,7 @@ export default function overrideFetch(emitCgi: Function, emitAsset: Function) {
 
         fetchPromise.then(function(res: any){
             try {
+                speedLog.url = formatUrl(res.url);
                 speedLog.duration = Date.now() - sendTime;
                 speedLog.status = res.status === 200 ? 200 : 400;
     

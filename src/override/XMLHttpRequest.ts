@@ -17,13 +17,13 @@ export default function overrideXhr(emitCgi: Function, emitAsset: Function) {
               args = arguments;
         
         xhr.speedLog = {
-            url: formatUrl(url),
             method
         } as SpeedLog;
 
         const sendTime = Date.now();
         xhr.addEventListener('readystatechange', function() {
             if(xhr.readyState === 4) {
+                xhr.speedLog.url = formatUrl(xhr.responseURL);
                 xhr.speedLog.duration = Date.now() - sendTime;
                 xhr.speedLog.status = xhr.status === 200 ? 200 : 400;
                 
