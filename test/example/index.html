@@ -22,6 +22,14 @@
             reportApiSpeed: true,
             reportAssetSpeed: true
         });
+        b = new Aegis({
+            id: 555,
+            // url: 'http://10.65.94.86:6543',
+            // speedUrl: 'http://10.65.94.86:6543/speed',
+            // performanceUrl: 'http://10.65.94.86:6543/performance',
+            reportApiSpeed: true,
+            reportAssetSpeed: true
+        });
         // cgi
         function sendXhr() {
             const xhr = new XMLHttpRequest();
@@ -97,7 +105,7 @@
     <script>
         let imgString = `<img src="http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg`,
             imgs = '';
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 10; i++) {
             imgs = imgs + imgString + `?t=${i}"/>`;
         }
         document.querySelector('#imageBox').innerHTML = imgs;

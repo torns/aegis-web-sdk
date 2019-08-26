@@ -75,7 +75,7 @@ export class Reporter {
     }
 
     setConfig = (config: AegisConfig) => {
-        this._config = extend(baseConfig, this._config, config) as AegisConfig;
+        this._config = extend({}, baseConfig, this._config, config) as AegisConfig;
 
         const id = parseInt(this._config.id as string, 10);
 
