@@ -16,6 +16,7 @@ const baseConfig: AegisConfig = {
     reportAssetSpeed: false,
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
+    performanceUrl: '//aegis.qq.com/speed/performance',
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
@@ -31,10 +32,6 @@ const baseConfig: AegisConfig = {
     assetLogFullSize: 20, // 静态资源等待上报日志的最大量，当超过这个量会立即上报
     restfulApiList: [] // 列出restful接口，将对这些接口归并上报
 }
-
-// 引入一次sdk发送一次性能数据
-// TODO  是否需要暴露上报地址配置项
-sendPerformance();
 
 export class Reporter {
     // 日志的缓存池
@@ -63,6 +60,7 @@ export class Reporter {
         }
 
         this.reportPv();
+        this.sendPerformance();
 
         this._collector.on('onRecevieError', this.handlerRecevieError);
         this._collector.on('onRecevieXhr', this.reportSpeedLog)
@@ -100,7 +98,11 @@ export class Reporter {
             }catch(e) {}
         }
 
-        getAid().then((aid) => {this._config.aid = aid});
+        // TODO不能每次setconfig都重新配置aid
+        getAid().then((aid) => {
+            this._config.aid = aid;
+            this._reportUrl += `&aid=${aid}`;
+        });
 
         this._reportUrl = `${this._config.url}?id=${id}&uin=${this._config.uin}&version=${this._config.version}&from=${encodeURIComponent(location.href)}`;
         this._speedReportUrl = this._config.speedUrl;
@@ -110,6 +112,10 @@ export class Reporter {
 
     reportPv() {
         send(`${this._config.url}/${this._config.id}`);
+    }
+
+    sendPerformance() {
+        sendPerformance(this._config);
     }
 
     handlerRecevieError = (data: any) => {

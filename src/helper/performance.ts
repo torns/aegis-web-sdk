@@ -5,20 +5,22 @@ import { AegisConfig } from '../interface/config';
 /**
  * 发送performance数据
  */
-export default () => {
+export default (config: AegisConfig) => {
     if(!canUseResourceTiming) return;
 
     const t: PerformanceTiming = performance.timing;
     if (t.domComplete) {
-        sendPerformance();
+        sendPerformance(config);
     } else {
         window.addEventListener('load', () => {
-            setTimeout(sendPerformance, 0);
+            setTimeout(() => {
+                sendPerformance(config)
+            }, 0);
         })
     }
 }
 
-const sendPerformance = () => {
+const sendPerformance = (config: AegisConfig) => {
     const t: PerformanceTiming = performance.timing,
           dnsLookup: number = t.domainLookupEnd - t.domainLookupStart,
           tcp: number = t.connectEnd - t.connectStart,
@@ -27,7 +29,5 @@ const sendPerformance = () => {
           contentDownload: number = t.responseEnd - t.responseStart,
           domParse: number = t.domInteractive - t.domLoading,
           resourceDownload: number = t.loadEventStart - t.domInteractive;
-    // TODO 发送数据
-        //   config: AegisConfig = this._config;
-    // send(`${this._config.performanceUrl}?id=${config.id}&uin=${config.uin}&version=${config.version}&loadPage=${loadPage}&domReady=${domReady}&lookupDomain=${lookupDomain}&request=${request}`);
+    send(`${config.performanceUrl}?id=${config.id}&dnsLookup=${dnsLookup}&tcp=${tcp}&ssl=${ssl}&ttfb=${ttfb}&contentDownload=${contentDownload}&domParse=${domParse}&resourceDownload=${resourceDownload}`);
 }
