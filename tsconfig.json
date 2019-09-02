@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "lib": ["es2015", "dom"],
+        "outDir": "lib",  // TS文件编译后会放入到此文件夹内
+        "baseUrl": ".",
+        "strict": true,
+        "removeComments": true,
+        "noErrorTruncation": true,
+        "strictNullChecks": false,
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

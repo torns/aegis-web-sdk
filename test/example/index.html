@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>cgi speed</title>
+    <style>
+        .a {
+            background-image: url('https://avatars1.githubusercontent.com/u/21698272?s=40&v=4');
+        }
+    </style>
+    <!-- aegis -->
+    <script src="./index.js"></script>
+
+    <script>
+        a = new Aegis({
+            id: 666,
+            // url: 'http://10.65.94.86:6543',
+            // speedUrl: 'http://10.65.94.86:6543/speed',
+            // performanceUrl: 'http://10.65.94.86:6543/performance',
+            reportApiSpeed: true,
+            reportAssetSpeed: true
+        });
+        b = new Aegis({
+            id: 555,
+            // url: 'http://10.65.94.86:6543',
+            // speedUrl: 'http://10.65.94.86:6543/speed',
+            // performanceUrl: 'http://10.65.94.86:6543/performance',
+            reportApiSpeed: true,
+            reportAssetSpeed: true
+        });
+        // cgi
+        function sendXhr() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'https://api.tone.qq.com/cgi-bin/interface/doRequest/' + Date.now());
+            xhr.send();
+        }
+        function sendFetch() {
+            fetch(`https://api.tone.qq.com/cgi-bin/interface/doRequest?t=${Math.floor(Math.random() * 100)}`)
+        }
+
+        // 图片
+        function insertImage() {
+            let img = document.createElement('img');
+            document.getElementById("imageBox").append(img);
+            img.src = "http://img.redocn.com/sheji/20141219/zhongguofengdaodeliyizhanbanzhijing_3744115.jpg";
+        }
+        function insertBackgroundImage() {
+            const e = document.createElement('div');
+            e.style.backgroundImage = `url("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png?t=${Math.floor(Math.random() * 100)}")`;
+            document.getElementById("imageBox").append(e);
+        }
+        function newImage() {
+            new Image().src = `https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png?t=${Math.floor(Math.random() * 100)}`;
+        }
+        function changeSrc() {
+            document.getElementById("img").src = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+        }
+        function changeClass() {
+            document.getElementById("imageBox").setAttribute('class', 'a');
+        }
+        function xhrImage() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg');
+            xhr.send();
+        }
+        function fetchImage() {
+            fetch(`http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg`)
+        }
+
+        // 脚本
+        function insertScript() {
+            let script = document.createElement('script');
+            script.src = 'https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js';
+            document.body.append(script);
+        }
+        function xhrScript() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('get', 'https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js');
+            xhr.send();
+        }
+        function fetchScript() {
+            fetch(`https://developer.mozilla.org/static/build/js/wiki.ae83915abe8f.js`)
+        }
+    </script>
+</head>
+<body>
+    <button onclick="sendXhr()">xhr发送请求</button>
+    <button onclick="sendFetch()">fetch发送请求</button><br>
+    <button onclick="insertImage()">插入img标签</button>
+    <button onclick="insertBackgroundImage()">插入带background-image的标签</button>
+    <button onclick="newImage()">新建Image实例</button>
+    <button onclick="changeSrc()">修改src属性</button>
+    <button onclick="changeClass()">修改class属性</button>
+    <button onclick="insertScript()">插入脚本</button>
+    <button onclick="xhrImage()">xhr请求图片</button>
+    <button onclick="xhrScript()">xhr请求脚本</button>
+    <button onclick="fetchImage()">fetch请求图片</button>
+    <button onclick="fetchScript()">fetch请求脚本</button>
+    <div id="imageBox" class="b c">
+        <img id="img" src=""/>
+    </div>
+
+    <script>
+        let imgString = `<img src="http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg`,
+            imgs = '';
+        for (let i = 0; i < 10; i++) {
+            imgs = imgs + imgString + `?t=${i}"/>`;
+        }
+        document.querySelector('#imageBox').innerHTML = imgs;
+    </script>
+</body>
+</html>
