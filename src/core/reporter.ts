@@ -12,12 +12,12 @@ const baseConfig: AegisConfig = {
     id: 0, // 上报 id
     uin: 0, // user id
     isWhiteList: false,
-    reportApiSpeed: false,
-    reportAssetSpeed: false,
+    reportApiSpeed: false, // 是否上报api测速
+    reportAssetSpeed: false, // 是否上报静态资源测速
     url: '//aegis.qq.com/badjs', // 上报接口
     speedUrl: '//aegis.qq.com/speed', // 上报测速数据接口
-    performanceUrl: '//aegis.qq.com/speed/performance',
-    version: 0,
+    performanceUrl: '//aegis.qq.com/speed/performance', // 上报性能监控接口
+    version: 0, // 用户自定义业务版本号
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
     ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
@@ -26,7 +26,7 @@ const baseConfig: AegisConfig = {
     maxLength: 500, // 每条日志内容最大长度，通常不建议修改
     monitorUrl: '//aegis.qq.com/monitor', // 自定义统计上报地址
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
-    offlineLog: false,
+    offlineLog: false, // 是否开启离线日志
     offlineLogExp: 3, // 离线日志过期时间，默认3天
     offlineLogAuto: false, // 是否自动询问服务器需要自动上报
     assetLogFullSize: 20, // 静态资源等待上报日志的最大量，当超过这个量会立即上报
